@@ -54,21 +54,21 @@ public class PiezaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PiezaResponseDTO> getProductById(@PathVariable UUID id) {
+    public ResponseEntity<PiezaResponseDTO> getPiezaById(@PathVariable UUID id) {
         log.info("Buscando pieza por id: " + id);
         return ResponseEntity.ok(piezaService.findById(id));
     }
 
     @PostMapping()
 
-    public ResponseEntity<PiezaResponseDTO> createProduct(@Valid @RequestBody PiezaCreateDTO piezaCreateDTO) {
+    public ResponseEntity<PiezaResponseDTO> createPieza(@Valid @RequestBody PiezaCreateDTO piezaCreateDTO) {
         log.info("Creando pieza: " + piezaCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(piezaService.save(piezaCreateDTO));
     }
 
     @PutMapping("/{id}")
 
-    public ResponseEntity<PiezaResponseDTO> updateProduct(@PathVariable UUID id, @Valid @RequestBody PiezaUpdateDTO piezaUpdateDTO) {
+    public ResponseEntity<PiezaResponseDTO> updatePieza(@PathVariable UUID id, @Valid @RequestBody PiezaUpdateDTO piezaUpdateDTO) {
         log.info("Actualizando pieza por id: " + id + " con pieza: " + piezaUpdateDTO);
         return ResponseEntity.ok(piezaService.update(id, piezaUpdateDTO));
     }
