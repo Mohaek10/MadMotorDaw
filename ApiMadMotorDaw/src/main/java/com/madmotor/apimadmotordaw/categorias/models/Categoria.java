@@ -20,9 +20,8 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 public class Categoria {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Builder.Default
-    private UUID id=UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name", nullable = false)
     @Length(min=3, message = "El nombre debe tener al menos 3 caracteres")
