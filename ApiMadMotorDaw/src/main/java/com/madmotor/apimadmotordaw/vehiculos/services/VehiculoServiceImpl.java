@@ -47,7 +47,11 @@ public class VehiculoServiceImpl implements VehiculoService {
     private final ObjectMapper mapper;
 
     @Autowired
-    public VehiculoServiceImpl(VehiculoRepository vehiculoRepository, VehiculoMapper vehiculoMapper, CategoriaService categoriaService, WebSocketConfig webSocketConfig, VehiculoNotificacionMapper vehiculoNotificacionMapper) {
+    public VehiculoServiceImpl(VehiculoRepository vehiculoRepository,
+                               VehiculoMapper vehiculoMapper,
+                               CategoriaService categoriaService,
+                               WebSocketConfig webSocketConfig,
+                               VehiculoNotificacionMapper vehiculoNotificacionMapper) {
         this.vehiculoRepository = vehiculoRepository;
         this.categoriaService = categoriaService;
         this.vehiculoMapper = vehiculoMapper;
@@ -58,7 +62,14 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
-    public Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria, Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double> kmMax, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
+    public Page<Vehiculo> findAll(Optional<String> marca,
+                                  Optional<String> categoria,
+                                  Optional<Integer> minYear,
+                                  Optional<Boolean> isDelete,
+                                  Optional<Double> kmMax,
+                                  Optional<Double> precioMax,
+                                  Optional<Double> stockMin,
+                                  Pageable pageable) {
 
         Specification<Vehiculo> specMarcaVehiculo = (root, query, criteriaBuilder) ->
                 marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m.toLowerCase() + "%"))
