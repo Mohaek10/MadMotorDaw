@@ -37,7 +37,7 @@ public class Vehiculo {
     @NotBlank(message = "El modelo no puede estar vacio")
     private String modelo;
 
-    @Column(name = "year", nullable = false)
+    @Column(name = "v_year", nullable = false)
     @Min(value = 1900, message = "El año no puede ser menor a 1900")
     private Integer year;
 
