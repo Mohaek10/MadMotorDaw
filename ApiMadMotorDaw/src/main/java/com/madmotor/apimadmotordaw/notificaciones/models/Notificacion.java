@@ -12,5 +12,5 @@ public class Notificacion<T> {
     private String createdAt;
 
 
-    public enum Tipo {CREATE, UPDATE, DELETE}
+    public enum Tipo {CREATE, UPDATE, DELETE, READ}
 }

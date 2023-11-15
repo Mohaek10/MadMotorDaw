@@ -2,6 +2,7 @@ package com.madmotor.apimadmotordaw.vehiculos.services;
 
 
 import com.madmotor.apimadmotordaw.vehiculos.dto.VehiculoCreateDto;
+import com.madmotor.apimadmotordaw.vehiculos.dto.VehiculoUpdateDto;
 import com.madmotor.apimadmotordaw.vehiculos.models.Vehiculo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,7 @@ public interface VehiculoService {
 
     Vehiculo save(VehiculoCreateDto vehiculoCreateDto);
 
-    Vehiculo update(String id, VehiculoCreateDto vehiculoCreateDto);
+    Vehiculo update(String id, VehiculoUpdateDto vehiculoUpdateDto);
 
     void deleteById(String id);
 
