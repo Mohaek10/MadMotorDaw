@@ -13,9 +13,13 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,13 +36,22 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 
     @Override
-    public List<Categoria> findAll(String name) {
-        if(name!=null){
-            return categoriaRepository.findAllByNameContainsIgnoreCase(name);
-        }else {
-            return categoriaRepository.findAll();
-        }
+    public Page<Categoria> findAll(Optional<String> nombre, Optional<Boolean> isDeleted, Pageable pageable) {
+        log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
+        Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Categoria> specIsDeleted = (root, query, criteriaBuilder) ->
+                isDeleted.map(m -> criteriaBuilder.equal(root.get("isDeleted"), m))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Categoria> criterio = Specification.where(specNombreCategoria)
+                .and(specIsDeleted);
+
+        return categoriaRepository.findAll(criterio, pageable);
     }
+
 
     @Override
     @Cacheable
@@ -49,6 +62,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
+    @Cacheable
     public Categoria findByName(String name) {
         return categoriaRepository.findByNameEqualsIgnoreCase(name)
                 .orElseThrow(()->new CategoriaNotFound("No se encontro la categoria con el nombre "+name));
@@ -56,9 +70,10 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @CachePut
-    public Categoria save(Categoria categoria) {
+    public Categoria save(CategoriaDto categoria) {
        if (categoriaRepository.findByNameEqualsIgnoreCase(categoria.getName()).isEmpty()){
-           return categoriaRepository.save(categoria);
+           Categoria cat =categoriaMapper.map(categoria);
+           return categoriaRepository.save(cat);
        }else{
            throw new CategoriaExists("Ya existe una categoria con el nombre "+categoria.getName());
        }
@@ -80,7 +95,9 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     @CacheEvict
     public void delete(Long id) {
-        Categoria categoria=findById(id);
+        if (categoriaRepository.findById(id).isEmpty()) {
+            throw new CategoriaNotFound("No se encontro la categoria con el id " + id);
+        }
         categoriaRepository.updateIsDeletedToTrueById(id);
 
     }

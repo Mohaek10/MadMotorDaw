@@ -4,13 +4,16 @@ package com.madmotor.apimadmotordaw.categorias.repositories;
 import com.madmotor.apimadmotordaw.categorias.models.Categoria;
 import com.madmotor.apimadmotordaw.vehiculos.models.Vehiculo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
+public interface CategoriaRepository extends JpaRepository<Categoria, Long>, JpaSpecificationExecutor<Categoria> {
+
+
 
     Optional<Categoria> findByNameEqualsIgnoreCase(String nombre);
 
