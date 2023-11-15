@@ -15,7 +15,7 @@ public class PersonalResponseDTO {
     private String dni;
     private String nombre;
     private String apellidos;
-    private LocalDate fechaNacimiento;
+    private String fechaNacimiento;
     private String direccion;
     private String iban;
 

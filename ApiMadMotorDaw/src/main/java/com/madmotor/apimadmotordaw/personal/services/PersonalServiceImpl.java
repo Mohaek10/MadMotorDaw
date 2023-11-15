@@ -27,7 +27,6 @@ import java.util.Optional;
 public class PersonalServiceImpl implements PersonalService {
     private final PersonalRepository personalRepository;
     private final PersonalMapper personalMapper;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD MM YYYY");
 
     @Autowired
 
@@ -40,19 +39,20 @@ public class PersonalServiceImpl implements PersonalService {
 
     @Override
     public PersonalResponseDTO findByDni(String dni) {
-
+        log.info("Buscando trabajador@ por dni: " + dni);
         return personalMapper.toPersonalResponseDto(personalRepository.findByDni(dni).orElseThrow(() -> new PersonalNotFound("Trabajador@ no encontrado")));
     }
 
 
     @Override
     public PersonalResponseDTO save(PersonalCreateDTO personalCreateDto) {
-
+        log.info("Creando trabajador@: " + personalCreateDto);
         return personalMapper.toPersonalResponseDto(personalRepository.save(personalMapper.toPersonal(personalCreateDto)));
     }
 
     @Override
     public PersonalResponseDTO update(String dni, PersonalUpdateDTO personalUpdateDto) {
+        log.info("Actualizando trabajador@ con dni: " + dni);
         var personalActualizar = personalRepository.findByDni(dni).orElseThrow(() -> new PersonalNotFound("Trabajador@ no encontrado"));
         personalActualizar.setDireccion(personalUpdateDto.getDireccion());
         personalActualizar.setIban(personalUpdateDto.getIban());
@@ -64,12 +64,13 @@ public class PersonalServiceImpl implements PersonalService {
 
     @Override
     public void deleteByDni(String dni) {
-        var personal = findByDni(dni);
+        log.info("Borrando trabajador@ con dni: " + dni);
+        personalRepository.findByDni(dni).orElseThrow(() -> new PersonalNotFound("Trabajador@ con dni: " + dni + " no encontrado"));
         personalRepository.deleteByDni(dni);
     }
 
     @Override
-    public Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<LocalDate> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable) {
+    public Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable) {
         Specification<Personal> specDni = (root, query, criteriaBuilder) ->
                 dni.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("dni")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
@@ -83,10 +84,8 @@ public class PersonalServiceImpl implements PersonalService {
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         Specification<Personal> specFechaNacimiento = (root, query, criteriaBuilder) ->
-                fechaNacimiento.map(m -> {
-                    String fecha = formatter.format(m);
-                    return criteriaBuilder.equal(root.get("fechaNacimiento"), fecha);
-                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+                fechaNacimiento.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("fechaNacimiento")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         Specification<Personal> specDireccion = (root, query, criteriaBuilder) ->
                 direccion.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("direccion")), "%" + m.toLowerCase() + "%"))
@@ -106,5 +105,17 @@ public class PersonalServiceImpl implements PersonalService {
 
         return personalRepository.findAll(criterio, pageable).map(personalMapper::toPersonalResponseDto);
 
+    }
+    @Override
+    public PersonalResponseDTO findById(Long id) {
+        log.info("Buscando trabajador@ por id: " + id);
+        return personalRepository.findById(id).map(personalMapper::toPersonalResponseDto).orElseThrow(() -> new PersonalNotFound("Trabajador@ " + id + " no encontrado"));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        log.info("Borrando trabajador@ con id: " + id);
+        personalRepository.findById(id).orElseThrow(() -> new PersonalNotFound("Trabajador@ con id: " + id + " no encontrado"));
+        personalRepository.deleteById(id);
     }
 }

@@ -11,11 +11,12 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface PersonalService {
-    Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<LocalDate> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable);
+    Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable);
     PersonalResponseDTO findByDni(String dni);
-   // PersonalResponseDTO findAll();     // Hacer con ruben y moha
+    PersonalResponseDTO findById(Long id);
     PersonalResponseDTO save(PersonalCreateDTO personalCreateDto);
     PersonalResponseDTO update(String dni, PersonalUpdateDTO personalCreateDto);
+    void deleteById(Long id);
     void deleteByDni(String dni);
 
 }

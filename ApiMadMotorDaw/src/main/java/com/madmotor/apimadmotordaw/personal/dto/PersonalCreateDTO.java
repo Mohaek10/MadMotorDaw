@@ -2,6 +2,7 @@ package com.madmotor.apimadmotordaw.personal.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,8 +31,8 @@ public class PersonalCreateDTO {
     @Length(min = 3, max = 50, message = "El/Los apellido/s deben contener entre 3 y 50 caracteres")
     private String apellidos;
 
-    @NotBlank
-    private LocalDate fechaNacimiento;
+    @NotNull
+    private String fechaNacimiento;
 
     @NotEmpty
     @Length(min = 3, max = 150, message = "La dirección debe de tener entre 3 y 150 caracteres")
