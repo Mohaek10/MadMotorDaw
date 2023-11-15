@@ -1,0 +1,4 @@
+package com.madmotor.apimadmotordaw.Piezas.dto;
+
+public class PiezaCreateDto {
+}
