@@ -48,6 +48,6 @@ public class Personal {
 
     @Column(name = "cuenta_bancaria", nullable = false)
     @NotBlank(message = "Debe tener una cuenta bancaria")
-    @Length(min = 20, max = 20, message = "La cuenta bancaria debe de tener 20 caracteres")
+    @Length(min = 10, max = 30, message = "La cuenta bancaria debe de tener 20 caracteres")
     private String iban;
 }

@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersonalResponseDTO {
+    private Long id;
     private String dni;
     private String nombre;
     private String apellidos;
