@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-public class VehicuoMapper {
+public class VehiculoMapper {
     public Vehiculo toVevhiculo(VehiculoCreateDto dto, Categoria categoria){
         return new Vehiculo(
                 null,

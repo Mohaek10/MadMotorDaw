@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,7 +20,6 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "VEHICULOS")
-@EntityListeners(AuditingEntityListener.class)
 public class Vehiculo {
     public static final String IMAGE_DEFAULT = "https://loremflickr.com/150/150";
 
