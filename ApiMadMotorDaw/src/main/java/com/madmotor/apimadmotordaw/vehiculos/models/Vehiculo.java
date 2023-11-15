@@ -1,4 +1,5 @@
 package com.madmotor.apimadmotordaw.vehiculos.models;
+
 import jakarta.validation.constraints.Min;
 import org.hibernate.annotations.CreationTimestamp;
 import com.madmotor.apimadmotordaw.categorias.models.Categoria;
@@ -26,7 +27,7 @@ public class Vehiculo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id=UUID.randomUUID();
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "marca", nullable = false)
     @NotBlank(message = "Debe de tener una marca")
@@ -39,16 +40,16 @@ public class Vehiculo {
     @Column(name = "precio", nullable = false)
     @Min(value = 0, message = "El precio no puede ser negativo")
     @Builder.Default
-    private Double precio=0.0;
+    private Double precio = 0.0;
 
     @Column(name = "stock", nullable = false)
-    @Min(value =0, message = "El stock no puede ser negativo")
+    @Min(value = 0, message = "El stock no puede ser negativo")
     @Builder.Default
-    private Integer stock=0;
+    private Integer stock = 0;
 
-    @Column (name="imagen",columnDefinition="TEXT DEFAULT '"+IMAGE_DEFAULT+"'")
+    @Column(name = "imagen", columnDefinition = "TEXT DEFAULT '" + IMAGE_DEFAULT + "'")
     @Builder.Default
-    private String imagen=IMAGE_DEFAULT;
+    private String imagen = IMAGE_DEFAULT;
 
     @Column(name = "descripcion", nullable = false)
     @NotBlank(message = "La descripcion no puede estar vacia")
@@ -57,16 +58,16 @@ public class Vehiculo {
     @CreationTimestamp
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Builder.Default
-    private LocalDateTime createdAt=LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Builder.Default
-    private LocalDateTime updatedAt=LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder.Default
     @Column(columnDefinition = "boolean default false")
-    private Boolean isDeleted=false;
+    private Boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")

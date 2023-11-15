@@ -24,7 +24,7 @@ public class Categoria {
     @Builder.Default
     private UUID id=UUID.randomUUID();
 
-    @Column(name = "nombre", nullable = false)
+    @Column(name = "name", nullable = false)
     @Length(min=3, message = "El nombre debe tener al menos 3 caracteres")
     private String name;
 
