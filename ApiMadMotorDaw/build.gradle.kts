@@ -26,6 +26,20 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    //Cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    //Data JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    //H2 base de datos
+    runtimeOnly("com.h2database:h2")
+    //Validacion
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    // Websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    //Jackson
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    //Pasar a xml
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 }
 
 tasks.withType<Test> {
