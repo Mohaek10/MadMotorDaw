@@ -74,10 +74,10 @@ class PiezaServiceImplTest {
 
     @Test
     void findAll() {
-        List<Pieza> expectedProducts = Arrays.asList(pieza1, pieza2);
-        List<PiezaResponseDTO> expectedResponseProducts = Arrays.asList(piezaResponseDTO1, piezaResponseDTO2);
+        List<Pieza> expectedPiezas = Arrays.asList(pieza1, pieza2);
+        List<PiezaResponseDTO> expectedResponsePiezas = Arrays.asList(piezaResponseDTO1, piezaResponseDTO2);
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
-        Page<Pieza> expectedPage = new PageImpl<>(expectedProducts);
+        Page<Pieza> expectedPage = new PageImpl<>(expectedPiezas);
         when(piezaRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
         when(piezaMapper.toPiezaResponse(any(Pieza.class))).thenReturn(piezaResponseDTO1);
         Page<PiezaResponseDTO> actualPage = piezaService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);

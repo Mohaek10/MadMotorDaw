@@ -36,7 +36,7 @@ class PiezaMapperTest {
 
     @Test
     void toPiezaUpdate() {
-        PiezaUpdateDTO productoUpdateRequest = PiezaUpdateDTO.builder()
+        PiezaUpdateDTO piezaUpdateDTO = PiezaUpdateDTO.builder()
                 .name("name1")
                 .description("description1")
                 .price(1.0)
@@ -44,12 +44,12 @@ class PiezaMapperTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Pieza producto = Pieza.builder()
+        Pieza pieza = Pieza.builder()
                 .id(UUID.randomUUID())
-                .name(productoUpdateRequest.getName())
-                .description(productoUpdateRequest.getDescription())
-                .price(productoUpdateRequest.getPrice())
-                .stock(productoUpdateRequest.getStock())
+                .name(piezaUpdateDTO.getName())
+                .description(piezaUpdateDTO.getDescription())
+                .price(piezaUpdateDTO.getPrice())
+                .stock(piezaUpdateDTO.getStock())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now()).build();
 
@@ -57,22 +57,22 @@ class PiezaMapperTest {
 
 
 
-        var res = pie.toPieza(productoUpdateRequest, producto);
+        var res = pie.toPieza(piezaUpdateDTO, pieza);
 
         // Assert
         assertAll(
                 () -> assertNotNull(res),
-                () -> assertEquals(productoUpdateRequest.getName(), res.getName()),
-                () -> assertEquals(productoUpdateRequest.getDescription(), res.getDescription()),
-                () -> assertEquals(productoUpdateRequest.getPrice(), res.getPrice()),
-                () -> assertEquals(productoUpdateRequest.getStock(), res.getStock())
+                () -> assertEquals(piezaUpdateDTO.getName(), res.getName()),
+                () -> assertEquals(piezaUpdateDTO.getDescription(), res.getDescription()),
+                () -> assertEquals(piezaUpdateDTO.getPrice(), res.getPrice()),
+                () -> assertEquals(piezaUpdateDTO.getStock(), res.getStock())
 
 
         );
     }
 
     @Test
-    void toProductResponseDto() {
+    void toPiezaResponseDto() {
         // Arrange
         Pieza pieza = Pieza.builder()
                 .id(UUID.randomUUID())
