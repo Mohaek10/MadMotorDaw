@@ -17,6 +17,6 @@ public class VehiculoResponseDto {
     private final String descripcion;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private String categoria;
+    private final String categoria;
 
 }

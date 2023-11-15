@@ -37,6 +37,14 @@ public class Vehiculo {
     @NotBlank(message = "El modelo no puede estar vacio")
     private String modelo;
 
+    @Column(name = "year", nullable = false)
+    @Min(value = 1900, message = "El año no puede ser menor a 1900")
+    private Integer year;
+
+    @Column(name = "km", nullable = false)
+    @Min(value = 0, message = "Los kilometros no pueden ser negativos")
+    private Double km;
+
     @Column(name = "precio", nullable = false)
     @Min(value = 0, message = "El precio no puede ser negativo")
     @Builder.Default
@@ -69,7 +77,6 @@ public class Vehiculo {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
-
 
     @Builder.Default
     @Column(columnDefinition = "boolean default false")
