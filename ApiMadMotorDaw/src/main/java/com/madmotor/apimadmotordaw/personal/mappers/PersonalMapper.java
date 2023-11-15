@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 
 public class PersonalMapper {
-    public Personal toPersonal(PersonalCreateDTO dto){
+    public Personal toPersonal(PersonalCreateDTO dto) {
         return Personal.builder()
                 .dni(dto.getDni())
                 .nombre(dto.getNombre())
@@ -21,15 +21,16 @@ public class PersonalMapper {
                 .build();
     }
 
-    public Personal toPersonal(PersonalUpdateDTO dto){
+    public Personal toPersonal(PersonalUpdateDTO dto) {
         return Personal.builder()
                 .direccion(dto.getDireccion())
                 .iban(dto.getIban())
                 .build();
     }
 
-    public PersonalResponseDTO toPersonalResponseDto(Personal dto){
+    public PersonalResponseDTO toPersonalResponseDto(Personal dto) {
         return PersonalResponseDTO.builder()
+                .id(dto.getId())
                 .dni(dto.getDni())
                 .nombre(dto.getNombre())
                 .apellidos(dto.getApellidos())
@@ -37,5 +38,5 @@ public class PersonalMapper {
                 .direccion(dto.getDireccion())
                 .iban(dto.getIban())
                 .build();
-      }
+    }
 }

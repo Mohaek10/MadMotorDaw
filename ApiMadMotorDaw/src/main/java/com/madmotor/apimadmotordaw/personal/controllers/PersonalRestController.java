@@ -29,7 +29,7 @@ public class PersonalRestController {
         this.personalService = personalService;
     }
 
-    @GetMapping("/dni")
+    @GetMapping("/dni/{dni}")
     public ResponseEntity<PersonalResponseDTO> getPersonalByDni(@PathVariable String dni) {
         log.info("Buscando personal por dni: " + dni);
         return ResponseEntity.ok(personalService.findByDni(dni));
