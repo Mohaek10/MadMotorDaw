@@ -76,7 +76,6 @@ public class ClienteRestController {
             String contentType = imagen.getContentType();
 
             if (!imagen.isEmpty() && contentType != null && !contentType.isEmpty() && datosPermitidos.contains(contentType.toLowerCase())) {
-                // Actualizamos el producto
                 return ResponseEntity.ok(clienteService.updateImage(id, imagen));
             } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el cliente ");
