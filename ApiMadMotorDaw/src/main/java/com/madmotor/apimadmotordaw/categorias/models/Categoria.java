@@ -21,7 +21,6 @@ import java.util.UUID;
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Builder.Default
     private Long id;
 
     @Column(name = "name", nullable = false)
