@@ -1,5 +1,6 @@
 package com.madmotor.apimadmotordaw.piezas.dto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,10 @@ public class PiezaCreateDTO {
     @Length(min = 3, max = 200, message = "La descripción debe tener entre 3 y 200 caracteres")
     private String description;
     @Positive
+    @NotNull(message = "El precio no puede ser nulo")
     private Double price;
     @PositiveOrZero
+    @NotNull(message = "El stock no puede ser nulo")
     private Integer stock;
 
 }

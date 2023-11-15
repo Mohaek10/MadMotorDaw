@@ -40,6 +40,8 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     //Pasar a xml
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+    //OpenApi o swagger para generacion de documentacion
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 }
 
 tasks.withType<Test> {
