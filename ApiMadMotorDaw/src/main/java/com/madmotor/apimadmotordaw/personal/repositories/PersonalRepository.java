@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PersonalRepository  extends JpaRepository<Personal, Long>, JpaSpecificationExecutor<Personal> {
-    Optional<Personal> findById(Long id);
+    Optional<Personal> findByDni(String dni);
 
     List<Personal> findAllByDni(String dni);
     List<Personal> findAllByNombre(String nombre);
     List<Personal> findAllByApellidos(String apellidos);
+    void deleteByDni(String dni);
 }
