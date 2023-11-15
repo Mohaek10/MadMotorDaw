@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,4 +39,6 @@ public class Pieza {
     @PositiveOrZero(message = "El stock debe ser mayor o igual que 0")
     private Integer stock;
     private String image=IMAGE_DEFAULT;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }
