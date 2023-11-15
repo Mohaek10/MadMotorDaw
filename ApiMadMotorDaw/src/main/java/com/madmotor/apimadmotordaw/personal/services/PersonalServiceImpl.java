@@ -1,4 +1,4 @@
-package com.madmotor.apimadmotordaw.personal.services;
+/*
 
 
 import com.madmotor.apimadmotordaw.personal.dto.PersonalCreateDTO;
@@ -119,3 +119,5 @@ public class PersonalServiceImpl implements PersonalService {
         personalRepository.deleteById(id);
     }
 }
+
+ */

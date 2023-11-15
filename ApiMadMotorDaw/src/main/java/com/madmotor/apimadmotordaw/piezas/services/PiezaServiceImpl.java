@@ -37,26 +37,26 @@ public class PiezaServiceImpl implements PiezaService {
 
     @Override
     public Page<PiezaResponseDTO> findAll(Optional<String> name, Optional<String> description, Optional<Double> price, Optional<Integer> stock, Pageable pageable) {
-        Specification<Pieza> specNombreProducto = (root, query, criteriaBuilder) ->
+        Specification<Pieza> specNombrePieza = (root, query, criteriaBuilder) ->
                 name.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        Specification<Pieza> specDescripcionProducto = (root, query, criteriaBuilder) ->
+        Specification<Pieza> specDescripcionPieza = (root, query, criteriaBuilder) ->
                 description.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        Specification<Pieza> specMaxPrecioProducto = (root, query, criteriaBuilder) ->
+        Specification<Pieza> specMaxPrecioPieza = (root, query, criteriaBuilder) ->
                 price.map(m -> criteriaBuilder.lessThanOrEqualTo(root.get("price"), m))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        Specification<Pieza> specStockProducto = (root, query, criteriaBuilder) ->
+        Specification<Pieza> specStockPieza = (root, query, criteriaBuilder) ->
                 price.map(m -> criteriaBuilder.greaterThanOrEqualTo(root.get("stock"), m))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        Specification<Pieza> criterio = Specification.where(specStockProducto)
-                .and(specNombreProducto)
-                .and(specMaxPrecioProducto)
-                .and(specDescripcionProducto);
+        Specification<Pieza> criterio = Specification.where(specStockPieza)
+                .and(specNombrePieza)
+                .and(specMaxPrecioPieza)
+                .and(specDescripcionPieza);
 
         return piezaRepository.findAll(criterio, pageable).map(piezaMapper::toPiezaResponse);
 
@@ -68,21 +68,21 @@ public class PiezaServiceImpl implements PiezaService {
     @Override
     @Cacheable(key = "#id")
     public PiezaResponseDTO findById(UUID id) {
-        log.info("Buscando producto por id: " + id);
+        log.info("Buscando pieza por id: " + id);
         return piezaMapper.toPiezaResponse(piezaRepository.findById(id).orElseThrow(() -> new PiezaNotFound(id)));
     }
 
     @CachePut(key = "#result.id")
     @Override
     public PiezaResponseDTO save(PiezaCreateDTO pieza) {
-        log.info("Guardando producto: " + pieza);
+        log.info("Guardando pieza: " + pieza);
         var piezaToSave = piezaRepository.save(piezaMapper.toPieza(pieza));
         return piezaMapper.toPiezaResponse(piezaToSave);
     }
     @CachePut(key = "#result.id")
     @Override
     public PiezaResponseDTO update(UUID id, PiezaUpdateDTO pieza) {
-        log.info("Actualizando producto: " + pieza);
+        log.info("Actualizando pieza: " + pieza);
         var piezaToUpdate = piezaRepository.findById(id).orElseThrow(() -> new PiezaNotFound(id));
         var piezaUpdated = piezaRepository.save(piezaMapper.toPieza(pieza, piezaToUpdate));
         return piezaMapper.toPiezaResponse(piezaUpdated);
@@ -91,17 +91,11 @@ public class PiezaServiceImpl implements PiezaService {
 
     @Override
     public void deleteById(UUID id) {
-        try {
-            piezaRepository.findById(id);
-        } catch (Exception e) {
-            throw new PiezaNotFound(id);
-        }
+            log.info("Borrando pieza con id: " + id);
+            piezaRepository.findById(id).orElseThrow(() -> new PiezaNotFound(id));
         piezaRepository.deleteById(id);
 
     }
 
-    @Override
-    public PiezaResponseDTO updateImage(UUID id, MultipartFile image, String url) {
-        return null;
-    }
+
 }
