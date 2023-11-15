@@ -91,17 +91,11 @@ public class PiezaServiceImpl implements PiezaService {
 
     @Override
     public void deleteById(UUID id) {
-        try {
-            piezaRepository.findById(id);
-        } catch (Exception e) {
-            throw new PiezaNotFound(id);
-        }
+            log.info("Borrando producto con id: " + id);
+            piezaRepository.findById(id).orElseThrow(() -> new PiezaNotFound(id));
         piezaRepository.deleteById(id);
 
     }
 
-    @Override
-    public PiezaResponseDTO updateImage(UUID id, MultipartFile image, String url) {
-        return null;
-    }
+
 }
