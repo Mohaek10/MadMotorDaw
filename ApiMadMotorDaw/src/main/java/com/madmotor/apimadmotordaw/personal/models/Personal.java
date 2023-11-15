@@ -3,6 +3,7 @@ package com.madmotor.apimadmotordaw.personal.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Entity
-
+@Table(name = "PERSONAL")
 public class Personal {
 
     @Id
@@ -38,8 +39,8 @@ public class Personal {
     private String apellidos;
 
     @Column(name = "fechaNacimiento", nullable = false)
-    @NotBlank(message = "Debe de tener una fecha")
-    private LocalDate fechaNacimiento;
+    @NotNull(message = "Debe de tener una fecha")
+    private String fechaNacimiento;
 
     @Column(name = "direccion", nullable = false)
     @NotEmpty(message = "La dirección no puede estar vacía")
