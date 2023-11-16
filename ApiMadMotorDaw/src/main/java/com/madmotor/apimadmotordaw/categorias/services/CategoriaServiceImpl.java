@@ -6,6 +6,7 @@ import com.madmotor.apimadmotordaw.categorias.exceptions.CategoriaNotFound;
 import com.madmotor.apimadmotordaw.categorias.mapper.CategoriaMapper;
 import com.madmotor.apimadmotordaw.categorias.models.Categoria;
 import com.madmotor.apimadmotordaw.categorias.repositories.CategoriaRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     public Page<Categoria> findAll(Optional<String> nombre, Optional<Boolean> isDeleted, Pageable pageable) {
         log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
         Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
-                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m + "%"))
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + m + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         Specification<Categoria> specIsDeleted = (root, query, criteriaBuilder) ->
@@ -57,24 +58,26 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Cacheable
     public Categoria findById(Long id) {
         return categoriaRepository.findById(id)
-                .orElseThrow(()->new CategoriaNotFound("No se encontro la categoria con el id "+id))
-        ;
+                .orElseThrow(() -> new CategoriaNotFound("No se encontro la categoria con el id " + id))
+                ;
     }
 
     @Override
     @Cacheable
     public Categoria findByName(String name) {
         return categoriaRepository.findByNameEqualsIgnoreCase(name)
-                .orElseThrow(()->new CategoriaNotFound("No se encontro la categoria con el nombre "+name));
+                .orElseThrow(() -> new CategoriaNotFound("No se encontro la categoria con el nombre " + name));
     }
 
     @Override
     @CachePut
     public Categoria save(CategoriaDto categoria) {
-       if (categoriaRepository.findByNameEqualsIgnoreCase(categoria.getName()).isEmpty()){
-           Categoria cat =categoriaMapper.map(categoria);
-           return categoriaRepository.save(cat);
-       }else{throw new CategoriaExists("Ya existe una categoria con el nombre "+categoria.getName());}
+        if (categoriaRepository.findByNameEqualsIgnoreCase(categoria.getName()).isEmpty()) {
+            Categoria cat = categoriaMapper.map(categoria);
+            return categoriaRepository.save(cat);
+        } else {
+            throw new CategoriaExists("Ya existe una categoria con el nombre " + categoria.getName());
+        }
 
     }
 
@@ -83,7 +86,9 @@ public class CategoriaServiceImpl implements CategoriaService {
     public Categoria update(Long id, CategoriaDto catDto) {
         Categoria categoriaActual = findById(id);
         categoriaRepository.findByNameEqualsIgnoreCase(catDto.getName()).ifPresent(c -> {
-            if (!c.getId().equals(id)) {throw new CategoriaExists("Ya existe una categoría con el nombre " + catDto.getName());}
+            if (!c.getId().equals(id)) {
+                throw new CategoriaExists("Ya existe una categoría con el nombre " + catDto.getName());
+            }
         });
         // Actualizamos los datos
         return categoriaRepository.save(categoriaMapper.map(catDto, categoriaActual));
@@ -91,11 +96,16 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @CacheEvict
+    @Transactional
     public void delete(Long id) {
-        if (categoriaRepository.findById(id).isEmpty()) {
-            throw new CategoriaNotFound("No se encontro la categoria con el id " + id);
-        }
-        categoriaRepository.updateIsDeletedToTrueById(id);
+        Categoria categoria = findById(id);
+        if (categoriaRepository.existeVehiculoByUd(id)) {
+            log.warn("No se puede borrar la categoría con id: " + id + " porque tiene vehiculos asociados");
+            throw new CategoriaExists("No se puede borrar la categoría con id " + id + " porque tiene vehiculos asociados");
+        } else {
+            categoriaRepository.deleteById(id);
 
+        }
     }
+
 }

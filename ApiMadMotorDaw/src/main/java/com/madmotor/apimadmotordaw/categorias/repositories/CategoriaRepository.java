@@ -35,4 +35,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long>, Jpa
     @Query("SELECT v FROM Vehiculo v WHERE v.categoria.id = :id")
     List<Vehiculo> findAllVehiculosByCategoriaId(Long id);
 
+    @Query("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END FROM Vehiculo v WHERE v.categoria.id = :id")
+    Boolean existeVehiculoByUd(Long id);
+
 }
