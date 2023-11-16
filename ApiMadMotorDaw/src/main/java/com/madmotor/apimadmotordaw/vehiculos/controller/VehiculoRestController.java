@@ -87,7 +87,7 @@ public class VehiculoRestController {
     public ResponseEntity<Void> deleteVehiculo(@PathVariable UUID id) {
         log.info("Borrando vehiculo con id: " + id);
         vehiculoService.deleteById(id.toString());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
