@@ -5,6 +5,7 @@ import com.madmotor.apimadmotordaw.personal.dto.PersonalResponseDTO;
 import com.madmotor.apimadmotordaw.personal.dto.PersonalUpdateDTO;
 import com.madmotor.apimadmotordaw.personal.exceptions.PersonalNotFound;
 import com.madmotor.apimadmotordaw.personal.services.PersonalService;
+
 import com.madmotor.apimadmotordaw.utils.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +15,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -42,10 +47,10 @@ public class PersonalRestController {
     }
 
     @PostMapping()
-    public ResponseEntity<PersonalResponseDTO> createPersonal(@RequestBody @Valid PersonalCreateDTO personalCreateDTO) {
+
+    public ResponseEntity<PersonalResponseDTO> createPersonal(@Valid @RequestBody PersonalCreateDTO personalCreateDTO) {
         log.info("Creando personal: " + personalCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(personalService.save(personalCreateDTO));
-
     }
 
     @GetMapping()
@@ -87,6 +92,17 @@ public class PersonalRestController {
         personalService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 
 }
