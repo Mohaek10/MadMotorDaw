@@ -38,6 +38,7 @@ public class ClienteMapper {
     }
     public ClienteReponse toClienteReponse(Cliente cliente) {
         return ClienteReponse.builder()
+                .id(cliente.getId())
                 .nombre(cliente.getNombre())
                 .apellido(cliente.getApellido())
                 .direccion(cliente.getDireccion())

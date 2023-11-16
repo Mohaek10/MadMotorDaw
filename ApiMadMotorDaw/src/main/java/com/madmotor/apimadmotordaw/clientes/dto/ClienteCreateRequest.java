@@ -28,7 +28,7 @@ public class ClienteCreateRequest {
     @Length(min = 3,message = "La direccion debe tener al menos 3 caracteres")
     @NotBlank(message = "Es necesario conocer su direccion")
    private final String direccion;
-
+    @NotNull(message = "Es necesario conocer su codigo postal")
     @Schema(description = "El codigo postal del cliente")
     @Min(value = 10000,message = "El codigo postal debe tener un minimo de 5 digitos")
    private final Integer codigoPostal;

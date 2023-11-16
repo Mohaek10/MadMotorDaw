@@ -6,12 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Cliente a devolver")
 public class ClienteReponse {
+    private UUID id;
 
     @Schema(description = "Nombre del cliente")
     private String nombre;
