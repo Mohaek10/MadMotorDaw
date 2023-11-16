@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping("${api.version}/clientes")
 @CacheConfig(cacheNames = {"clientes"})
 public class ClienteRestController {
     private final ClienteService clienteService;
