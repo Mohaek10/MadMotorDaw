@@ -46,7 +46,7 @@ class PersonalRestControllerTestMvc {
             .apellidos("Torres")
             .fechaNacimiento("11-09-2002")
             .direccion("Av. de la Constitución 1")
-            .iban("ES754197453945")
+            .iban("ES123456489123456789")
             .build();
 
     private final Personal personal2 = new Personal().builder()
@@ -56,7 +56,7 @@ class PersonalRestControllerTestMvc {
             .apellidos("Torres")
             .fechaNacimiento("11-09-2002")
             .direccion("Av. de la Constitución 1")
-            .iban("ES754197453978")
+            .iban("ES123456787123456789")
             .build();
 
     private final PersonalResponseDTO testResponseDTO1 = PersonalResponseDTO.builder()
@@ -66,7 +66,7 @@ class PersonalRestControllerTestMvc {
             .apellidos("Tomas")
             .fechaNacimiento("01-01-2002")
             .direccion("Camino de la Fuente 1")
-            .iban("ES754195453945")
+            .iban("ES123456789123456789")
             .build();
 
     private final PersonalResponseDTO testResponseDTO2 = PersonalResponseDTO.builder()
@@ -111,7 +111,7 @@ class PersonalRestControllerTestMvc {
                 .apellidos("Martinez")
                 .fechaNacimiento("21-01-2002")
                 .direccion("Calle tercera 1")
-                .iban("ES854195453945")
+                .iban("ES123456729123456789")
                 .build();
         when(personalService.save(any(PersonalCreateDTO.class))).thenReturn(personalDto);
         MockHttpServletResponse response = mockMvc.perform(post(myEndpoint)
