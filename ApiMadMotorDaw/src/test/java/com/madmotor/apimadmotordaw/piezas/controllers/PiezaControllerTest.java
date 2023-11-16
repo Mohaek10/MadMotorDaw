@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 class PiezaControllerTest {
     private final String myEndpoint = "/v1/piezas";
     @Mock
@@ -63,6 +65,7 @@ class PiezaControllerTest {
             .stock(2)
             .image("image2")
             .build();
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -71,20 +74,19 @@ class PiezaControllerTest {
 
     @Test
     void getAllPiezas() {
-        //Given
         PageRequest pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
         Page<PiezaResponseDTO> page = new PageImpl<>(List.of(testResponseDTO, testResponseDTO2));
         when(piezaService.findAll(any(), any(), any(), any(), any())).thenReturn(page);
-        //When
         ResponseEntity<PageResponse<PiezaResponseDTO>> response = piezaController.getAllPiezas(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10, "id", "asc");
-        //Then
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(2, response.getBody().totalElements());
-        assertEquals(1, response.getBody().totalPages());
-        assertEquals(2, response.getBody().content().size());
-        assertEquals(testResponseDTO, response.getBody().content().get(0));
-        assertEquals(testResponseDTO2, response.getBody().content().get(1));
-        verify(piezaService, times(1)).findAll(any(), any(), any(), any(), any());
+        assertAll(
+                () -> assertEquals(200, response.getStatusCodeValue()),
+                () -> assertEquals(2, response.getBody().totalElements()),
+                () -> assertEquals(1, response.getBody().totalPages()),
+                () -> assertEquals(2, response.getBody().content().size()),
+                () -> assertEquals(testResponseDTO, response.getBody().content().get(0)),
+                () -> assertEquals(testResponseDTO2, response.getBody().content().get(1)),
+                () -> verify(piezaService, Mockito.times(1)).findAll(any(), any(), any(), any(), any())
+        );
 
 
     }
