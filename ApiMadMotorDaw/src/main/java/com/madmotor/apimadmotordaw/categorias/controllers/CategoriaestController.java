@@ -52,7 +52,7 @@ public class CategoriaestController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> getCategoryById(@PathVariable Long id) {
-        log.info("Buscando producto por id: " + id);
+        log.info("Buscando categoria por id: " + id);
         return ResponseEntity.ok(categoriasService.findById(id));
     }
     @PostMapping()

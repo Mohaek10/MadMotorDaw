@@ -49,7 +49,7 @@ public class PersonalRestController {
     @PostMapping()
 
     public ResponseEntity<PersonalResponseDTO> createPersonal(@Valid @RequestBody PersonalCreateDTO personalCreateDTO) {
-        log.info("Creando pieza: " + personalCreateDTO);
+        log.info("Creando personal: " + personalCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(personalService.save(personalCreateDTO));
     }
 
