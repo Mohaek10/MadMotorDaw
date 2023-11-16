@@ -81,17 +81,6 @@ public class ClienteServiceImpl implements ClienteService{
     }
 
 
-//    @Override
-//    public List<ClienteReponse> findAll() {
-//        log.info("Dando un listado de todos los clientes");
-//        try {
-//         return clienteRepository.findAll().stream().map(clienteMapper::toClienteReponse).toList();
-//         } catch (Exception e) {
-//        log.error("Error al obtener la lista de clientes", e);
-//        throw new ClienteFailList("Error al obtener la lista de clientes");
-//    }
-//    }
-
     @Override
     public void deleteByDni(String dni) {
         log.info("Eliminando el cliente con el dni numero : " + dni);
@@ -119,7 +108,7 @@ public class ClienteServiceImpl implements ClienteService{
 
 
         var cliente = clienteRepository.findByDniEqualsIgnoreCase(dni).orElseThrow(() -> new ClienteNotFound(dni));
-        if( cliente.getImagen()!= null && !cliente.getImagen().equals(Cliente.IMAGE_DEFAULT)){
+        if (cliente.getImagen() != null && !cliente.getImagen().equals(Cliente.IMAGE_DEFAULT)) {
             storageService.delete(cliente.getImagen());
         }
         String img = storageService.store(imagen);
