@@ -110,7 +110,7 @@ public class VehiculoServiceImpl implements VehiculoService {
     public Vehiculo findById(String id) {
         log.info("Buscando por UUID " + id);
         var myID = UUID.fromString(id);
-        return vehiculoRepository.findById(myID).orElseThrow(() -> new RuntimeException("No se encontro el vehiculo con el id " + id));
+        return vehiculoRepository.findById(myID).orElseThrow(() -> new VehiculoNotFound("No se encontro el vehiculo con el id " + id));
 
     }
 
@@ -138,8 +138,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         var categoriaNueva = categoriaService.findByName(vehiculoUpdateDto.getCategoria());
 
         // Si la categoría actualizada no existe, usar la categoría actual del vehículo
-        if (categoriaNueva == null) {
-            categoriaNueva = categoriaActual;
+        if (categoriaNueva == null) {categoriaNueva = categoriaActual;
         }
 
         // Guardar el vehículo actualizado con la categoría correspondiente
@@ -189,12 +188,10 @@ public class VehiculoServiceImpl implements VehiculoService {
 
             Thread senderThread = new Thread(() -> {
                 try {
-                    webSocketService.sendMessage(json);
-                } catch (Exception e) {
+                    webSocketService.sendMessage(json); } catch (Exception e) {
                 }
             });
-            senderThread.start();
-        } catch (JsonProcessingException e) {
+            senderThread.start();} catch (JsonProcessingException e) {
         }
     }
 
