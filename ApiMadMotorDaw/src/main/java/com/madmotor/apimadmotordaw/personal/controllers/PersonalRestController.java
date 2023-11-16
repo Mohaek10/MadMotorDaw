@@ -5,6 +5,7 @@ import com.madmotor.apimadmotordaw.personal.dto.PersonalResponseDTO;
 import com.madmotor.apimadmotordaw.personal.dto.PersonalUpdateDTO;
 import com.madmotor.apimadmotordaw.personal.exceptions.PersonalNotFound;
 import com.madmotor.apimadmotordaw.personal.services.PersonalService;
+
 import com.madmotor.apimadmotordaw.utils.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +43,10 @@ public class PersonalRestController {
     }
 
     @PostMapping()
-    public ResponseEntity<PersonalResponseDTO> createPersonal(@RequestBody @Valid PersonalCreateDTO personalCreateDTO) {
-        log.info("Creando personal: " + personalCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(personalService.save(personalCreateDTO));
 
+    public ResponseEntity<PersonalResponseDTO> createPersonal(@Valid @RequestBody PersonalCreateDTO personalCreateDTO) {
+        log.info("Creando pieza: " + personalCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(personalService.save(personalCreateDTO));
     }
 
     @GetMapping()

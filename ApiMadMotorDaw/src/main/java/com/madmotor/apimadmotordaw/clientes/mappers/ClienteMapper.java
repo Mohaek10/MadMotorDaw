@@ -25,7 +25,7 @@ public class ClienteMapper {
 
     public Cliente toCliente(ClienteUpdateRequest clienteUpdateRequest, Cliente cliente) {
         return Cliente.builder()
-                .codCliente(cliente.getCodCliente())
+                .id(cliente.getId())
                 .dni(cliente.getDni())
                 .nombre(clienteUpdateRequest.getNombre()!=null && !clienteUpdateRequest.getNombre().isEmpty()? clienteUpdateRequest.getNombre() : cliente.getNombre())
                 .apellido(clienteUpdateRequest.getApellido()!= null && !clienteUpdateRequest.getApellido().isEmpty()? clienteUpdateRequest.getApellido() : cliente.getApellido())
