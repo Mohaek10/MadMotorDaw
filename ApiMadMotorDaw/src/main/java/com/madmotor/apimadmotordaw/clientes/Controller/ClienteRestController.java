@@ -4,12 +4,16 @@ import com.madmotor.apimadmotordaw.clientes.dto.ClienteCreateRequest;
 import com.madmotor.apimadmotordaw.clientes.dto.ClienteReponse;
 import com.madmotor.apimadmotordaw.clientes.dto.ClienteUpdateRequest;
 import com.madmotor.apimadmotordaw.clientes.services.ClienteService;
+import com.madmotor.apimadmotordaw.utils.PageResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
@@ -24,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -37,8 +42,20 @@ public class ClienteRestController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ClienteReponse>> getAllClientes(){
-        return ResponseEntity.ok(clienteService.findAll());
+    public ResponseEntity<PageResponse<ClienteReponse>> getAllClientes(
+            @RequestParam (required = false) Optional<String> nombre,
+            @RequestParam (required = false) Optional<String> apellido,
+            @RequestParam (required = false) Optional<String> direccion,
+            @RequestParam (required = false) Optional<Integer> codigoPostal,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String order
+    ){
+        Sort sort = order.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page,size,sort);
+        return ResponseEntity.ok(PageResponse.of(clienteService.findAll(nombre, apellido, direccion, codigoPostal, pageable),sortBy,order));
     }
 
     @Cacheable
