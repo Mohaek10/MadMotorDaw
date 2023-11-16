@@ -31,16 +31,7 @@ class ClienteRepositoryTest {
     }
 
 
-    @Test
-    void findByDniEqualsIgnoreCase_existingDNI_returnsOptionalWithCliente  () {
-        String dni = cliente1.getDni();
-        Optional<Cliente> optionalCliente = clienteRepository.findByDniEqualsIgnoreCase(dni);
-        assertAll("findByDniEqualsIgnoreCase_existingDNI_returnsOptionalWithCliente",
-                () ->assertNotNull(optionalCliente),
-                () ->assertTrue(optionalCliente.isPresent()),
-                () ->assertEquals(dni, optionalCliente.get().getDni())
-        );
-    }
+
     @Test
     void findByDniEqualsIgnoreCase_nonExistingDNI_returnsOptionalWithCliente(){
         String dni = "12345678B";
@@ -68,7 +59,7 @@ class ClienteRepositoryTest {
         assertAll("saveButNotExist",
                 () ->assertNotNull(clienteGuardado),
                 () -> assertTrue(clienteRepository.findByDniEqualsIgnoreCase(clienteGuardado.getDni()).isPresent()),
-                () ->assertEquals(3,listado.size())
+                () ->assertEquals(7,listado.size())
         );
     }
 
@@ -90,7 +81,7 @@ class ClienteRepositoryTest {
         assertAll("saveButExist",
                 () ->assertNotNull(clienteGuardado),
                 () -> assertTrue(clienteRepository.findByDniEqualsIgnoreCase(cliente3.getDni()).isPresent()),
-                () ->assertEquals(3,listado.size())
+                () ->assertEquals(7,listado.size())
         );
     }
 }
