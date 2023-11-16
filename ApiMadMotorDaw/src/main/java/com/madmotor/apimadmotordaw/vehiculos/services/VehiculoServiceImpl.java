@@ -37,14 +37,14 @@ import java.util.UUID;
 @Slf4j
 public class VehiculoServiceImpl implements VehiculoService {
     public void setWebSocketService(WebSocketHandler webSocketHandlerMock) {
-        this.webSocketHandler = webSocketHandlerMock;
+        this.webSocketService = webSocketHandlerMock;
     }
 
     private final VehiculoRepository vehiculoRepository;
     private final CategoriaService categoriaService;
     private final WebSocketConfig webSocketConfig;
     private final VehiculoNotificacionMapper vehiculoNotificacionMapper;
-    private WebSocketHandler webSocketHandler;
+    private WebSocketHandler webSocketService;
     private final VehiculoMapper vehiculoMapper;
     private final ObjectMapper mapper;
 
@@ -58,7 +58,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         this.categoriaService = categoriaService;
         this.vehiculoMapper = vehiculoMapper;
         this.webSocketConfig = webSocketConfig;
-        webSocketHandler = webSocketConfig.webSocketVehiHandler();
+        webSocketService = webSocketConfig.webSocketVehiculo();
         mapper = new ObjectMapper();
         this.vehiculoNotificacionMapper = vehiculoNotificacionMapper;
     }
@@ -70,7 +70,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         Specification<Vehiculo> specMarcaVehiculo = (root, query, criteriaBuilder) ->
                 marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
-        Specification<Vehiculo> specCategoriaProducto = (root, query, criteriaBuilder) ->
+        Specification<Vehiculo> specCategoriaVehiculo = (root, query, criteriaBuilder) ->
                 categoria.map(c -> {
                     Join<Vehiculo, Categoria> categoriaJoin = root.join("categoria");
                     return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("name")), "%" + c + "%");
@@ -94,7 +94,7 @@ public class VehiculoServiceImpl implements VehiculoService {
                 stockMin.map(s -> criteriaBuilder.greaterThanOrEqualTo(root.get("stock"), s))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         Specification<Vehiculo> criterio=Specification.where(specMarcaVehiculo)
-                .and(specCategoriaProducto)
+                .and(specCategoriaVehiculo)
                 .and(specModeloVehiculo)
                 .and(specMinYearVehiculo)
                 .and(specIsDeleteVehiculo)
@@ -173,14 +173,8 @@ public class VehiculoServiceImpl implements VehiculoService {
         }
     }
 
-    void onChange(Notificacion.Tipo tipo, Vehiculo data) {
-
-        log.info("Enviando notificación a los clientes ws");
-        if (webSocketHandler == null) {
-            log.warn("No se ha podido enviar la notificación a los clientes ws, no se ha encontrado el servicio");
-            webSocketHandler = this.webSocketConfig.webSocketVehiHandler();
-        }
-
+    public void onChange(Notificacion.Tipo tipo, Vehiculo data) {
+        log.info("Servicio de vehiculo onChange con tipo: " + tipo + " y datos: " + data);
         try {
             Notificacion<VehiculoNotificacionDto> notificacion = new Notificacion<>(
                     "VEHICULO",
@@ -193,17 +187,14 @@ public class VehiculoServiceImpl implements VehiculoService {
 
             log.info("Enviando mensaje a los clientes ws");
 
-
             Thread senderThread = new Thread(() -> {
                 try {
-                    webSocketHandler.sendMessage(json);
+                    webSocketService.sendMessage(json);
                 } catch (Exception e) {
-                    log.error("Error al enviar el mensaje a través del servicio WebSocket", e);
                 }
             });
             senderThread.start();
         } catch (JsonProcessingException e) {
-            log.error("Error al convertir la notificación a JSON", e);
         }
     }
 

@@ -11,16 +11,18 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-
     @Value("${api.version}")
     private String apiVersion;
+
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler( webSocketVehiHandler(), "/ws"+apiVersion+"/vehiculos");
-
+        registry.addHandler(webSocketVehiculo(), "/ws/" + apiVersion + "/vehiculos");
     }
+
     @Bean
-    public WebSocketHandler webSocketVehiHandler() {
+    public WebSocketHandler webSocketVehiculo() {
         return new WebSocketHandler("Vehiculos");
     }
+
 }
