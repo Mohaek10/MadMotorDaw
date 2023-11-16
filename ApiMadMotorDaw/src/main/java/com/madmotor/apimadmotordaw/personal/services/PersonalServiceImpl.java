@@ -12,6 +12,8 @@ import com.madmotor.apimadmotordaw.personal.services.PersonalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,12 +41,14 @@ public class PersonalServiceImpl implements PersonalService {
 
 
     @Override
+    @CachePut
     public PersonalResponseDTO save(PersonalCreateDTO personalCreateDto) {
         log.info("Creando trabajador@: " + personalCreateDto);
         return personalMapper.toPersonalResponseDto(personalRepository.save(personalMapper.toPersonal(personalCreateDto)));
     }
 
     @Override
+    @CachePut
     public PersonalResponseDTO update(Long id, PersonalUpdateDTO personalUpdateDto) {
         log.info("Actualizando trabajador@ con id: " + id);
         var personalActualizar = personalRepository.findById(id).orElseThrow(() -> new PersonalNotFound("Trabajador@ no encontrado"));
@@ -90,6 +94,7 @@ public class PersonalServiceImpl implements PersonalService {
     }
 
     @Override
+    @CacheEvict
     public void deleteById(Long id) {
         log.info("Borrando trabajador@ con id: " + id);
         personalRepository.findById(id).orElseThrow(() -> new PersonalNotFound("Trabajador@ con id: " + id + " no encontrado"));
