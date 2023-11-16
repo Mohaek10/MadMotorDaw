@@ -65,6 +65,9 @@ public class ClienteServiceImpl implements ClienteService{
     public void deleteByDni(String dni) {
         log.info("Eliminando el cliente con el dni numero : " + dni);
         var clienteAElminar = clienteRepository.findByDniEqualsIgnoreCase(dni).orElseThrow(() -> new ClienteNotFound(dni));
+        if( clienteAElminar.getImagen()!= null &&!clienteAElminar.getImagen().equals(Cliente.IMAGE_DEFAULT)){
+            storageService.delete(clienteAElminar.getImagen());
+        }
         clienteRepository.delete(clienteAElminar);
     }
 
