@@ -74,22 +74,19 @@ public class CategoriaServiceImpl implements CategoriaService {
        if (categoriaRepository.findByNameEqualsIgnoreCase(categoria.getName()).isEmpty()){
            Categoria cat =categoriaMapper.map(categoria);
            return categoriaRepository.save(cat);
-       }else{
-           throw new CategoriaExists("Ya existe una categoria con el nombre "+categoria.getName());
-       }
+       }else{throw new CategoriaExists("Ya existe una categoria con el nombre "+categoria.getName());}
 
     }
 
     @Override
     @CachePut
     public Categoria update(Long id, CategoriaDto catDto) {
-        Categoria categoriaActual=findById(id);
-        if (categoriaRepository.findByNameEqualsIgnoreCase(catDto.getName()).isEmpty()){
-
-            return categoriaRepository.save(categoriaMapper.map(catDto,categoriaActual));
-    }else {
-            throw new CategoriaExists("Ya existe una categoria con el nombre "+catDto.getName());
-        }
+        Categoria categoriaActual = findById(id);
+        categoriaRepository.findByNameEqualsIgnoreCase(catDto.getName()).ifPresent(c -> {
+            if (!c.getId().equals(id)) {throw new CategoriaExists("Ya existe una categoría con el nombre " + catDto.getName());}
+        });
+        // Actualizamos los datos
+        return categoriaRepository.save(categoriaMapper.map(catDto, categoriaActual));
     }
 
     @Override
