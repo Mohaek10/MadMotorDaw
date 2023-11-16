@@ -12,6 +12,10 @@ import com.madmotor.apimadmotordaw.clientes.mappers.ClienteMapper;
 import com.madmotor.apimadmotordaw.utils.storage.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "clientes")
 public class ClienteServiceImpl implements ClienteService{
     private final ClienteRepository clienteRepository;
 
@@ -35,7 +40,7 @@ public class ClienteServiceImpl implements ClienteService{
         this.clienteMapper = clienteMapper;
         this.storageService = storageService;
     }
-
+    @CachePut
     @Override
     public ClienteReponse updateByDni(String dni, ClienteUpdateRequest clienteUpdateRequest) {
         log.info("Actualizando el cliente con el DNI número: " + dni);
@@ -47,7 +52,7 @@ public class ClienteServiceImpl implements ClienteService{
 
         return clienteMapper.toClienteReponse(clienteActualizado);
     }
-
+    @Cacheable
     @Override
     public ClienteReponse findByDni(String dni) {
         log.info("Buscando el cliente con el dni numero : " + dni );
@@ -81,6 +86,7 @@ public class ClienteServiceImpl implements ClienteService{
     }
 
 
+    @CacheEvict
     @Override
     public void deleteByDni(String dni) {
         log.info("Eliminando el cliente con el dni numero : " + dni);
@@ -90,7 +96,7 @@ public class ClienteServiceImpl implements ClienteService{
         }
         clienteRepository.delete(clienteAElminar);
     }
-
+    @CachePut
     @Override
     public ClienteReponse savePost(ClienteCreateRequest clienteCreateRequest) {
         log.info("Guardando a un nuevo cliente");
@@ -101,7 +107,7 @@ public class ClienteServiceImpl implements ClienteService{
             throw new ClienteFailSave("Ha habido un error al registrar al cliente");
         }
     }
-
+    @CachePut
     @Override
     public ClienteReponse updateImage(String dni, MultipartFile imagen) {
         log.info("Actualizando la imagen del cliente con el dni numero: " + dni);

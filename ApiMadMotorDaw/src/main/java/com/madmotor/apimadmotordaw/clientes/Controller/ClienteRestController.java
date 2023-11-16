@@ -7,10 +7,6 @@ import com.madmotor.apimadmotordaw.clientes.services.ClienteService;
 import com.madmotor.apimadmotordaw.utils.PageResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,7 +28,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("${api.version}/clientes")
-@CacheConfig(cacheNames = {"clientes"})
 public class ClienteRestController {
     private final ClienteService clienteService;
 
@@ -58,30 +53,27 @@ public class ClienteRestController {
         return ResponseEntity.ok(PageResponse.of(clienteService.findAll(nombre, apellido, direccion, codigoPostal, pageable),sortBy,order));
     }
 
-    @Cacheable
     @GetMapping("/{id}")
     public ResponseEntity<ClienteReponse> getClienteByDni(@PathVariable String id){
         return ResponseEntity.ok(clienteService.findByDni(id));
     }
 
-    @CachePut
     @PostMapping
     public ResponseEntity<ClienteReponse> createCliente(@Valid @RequestBody ClienteCreateRequest clienteCreateRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.savePost((clienteCreateRequest)));
     }
 
-    @CachePut
     @PutMapping("/{id}")
     public ResponseEntity<ClienteReponse> updateCliente(@PathVariable String id, @Valid@RequestBody ClienteUpdateRequest clienteUpdateRequest){
         return ResponseEntity.ok(clienteService.updateByDni(id,clienteUpdateRequest));
     }
 
-    @Cacheable
+
     @PatchMapping("/{id}")
     public ResponseEntity<ClienteReponse>patchClienteUpdate(@PathVariable String id, @RequestBody ClienteUpdateRequest clienteUpdateRequest){
         return ResponseEntity.ok(clienteService.updateByDni(id,clienteUpdateRequest));
     }
-    @CacheEvict
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void>deleteCliente(@PathVariable String id) {
         clienteService.deleteByDni(id);

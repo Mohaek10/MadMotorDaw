@@ -28,4 +28,6 @@ VALUES
 INSERT INTO CLIENTES (id, nombre, apellido, direccion, codigo_Postal, dni, piezas, coches, imagen)
 VALUES
     (uuid(),'Juan', 'Perez', '' 'Calle Principal', 12345, '12345678A', true, false, 'https://via.placeholder.com/150'),
-    (UUID(), 'María', 'Gómez', 'Avenida Central', 54321, '98765432B', false, true, 'https://via.placeholder.com/150');
+    (UUID(), 'María', 'Gómez', 'Avenida Central', 54321, '98765432B', false, true, 'https://via.placeholder.com/150'),
+    (UUID(), 'Pedro', 'Martínez', 'Calle Nueva', 67890, '45678901C', true, true, 'https://via.placeholder.com/150'),
+    (UUID(), 'Laura', 'López', 'Paseo Grande', 13579, '01234567D', false, false, 'https://via.placeholder.com/150');
