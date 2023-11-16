@@ -1,10 +1,12 @@
 package com.madmotor.apimadmotordaw.vehiculos.dto;
 
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
+@AllArgsConstructor
 public class VehiculoUpdateDto {
     @Length(min = 3, message = "La marca debe tener al menos 3 caracteres")
     private String marca;
