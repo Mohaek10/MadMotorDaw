@@ -12,10 +12,14 @@ import com.madmotor.apimadmotordaw.clientes.mappers.ClienteMapper;
 import com.madmotor.apimadmotordaw.utils.storage.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -51,15 +55,42 @@ public class ClienteServiceImpl implements ClienteService{
     }
 
     @Override
-    public List<ClienteReponse> findAll() {
-        log.info("Dando un listado de todos los clientes");
-        try {
-         return clienteRepository.findAll().stream().map(clienteMapper::toClienteReponse).toList();
-         } catch (Exception e) {
-        log.error("Error al obtener la lista de clientes", e);
-        throw new ClienteFailList("Error al obtener la lista de clientes");
+    public Page<ClienteReponse> findAll(Optional<String> nombre, Optional<String> apellido, Optional<String> direccion, Optional<Integer> codPostal, Pageable pageable) {
+        Specification<Cliente> specNombre = (root, query, criteriaBuilder) ->
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Cliente> specApellido = (root, query, criteriaBuilder) ->
+                apellido.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("apellido")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Cliente> specDireccion = (root, query, criteriaBuilder) ->
+                direccion.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("direccion")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Cliente> specCodPostal = (root, query, criteriaBuilder) ->
+                codPostal.map(m -> criteriaBuilder.equal(root.get("codigoPostal"), m))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Cliente> criterio = Specification.where(specNombre)
+                .and(specApellido)
+                .and(specDireccion)
+                .and(specCodPostal);
+
+        return clienteRepository.findAll(criterio, pageable).map(clienteMapper::toClienteReponse);
     }
-    }
+
+
+//    @Override
+//    public List<ClienteReponse> findAll() {
+//        log.info("Dando un listado de todos los clientes");
+//        try {
+//         return clienteRepository.findAll().stream().map(clienteMapper::toClienteReponse).toList();
+//         } catch (Exception e) {
+//        log.error("Error al obtener la lista de clientes", e);
+//        throw new ClienteFailList("Error al obtener la lista de clientes");
+//    }
+//    }
 
     @Override
     public void deleteByDni(String dni) {
