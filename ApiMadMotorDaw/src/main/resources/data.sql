@@ -24,4 +24,9 @@ VALUES
     (UUID(),'MERCEDES','BENZ',2018,20000,200000,8,'https://via.placeholder.com/150','Descripcion3',3),
     (UUID(),'SEAT','LEON',2019,10000,30000,10,'https://via.placeholder.com/150','Descripcion4',1);
 
-
+INSERT INTO CLIENTES (id, nombre, apellido, direccion, codigo_Postal, dni, piezas, coches, imagen)
+VALUES
+    (uuid(),'Juan', 'Perez', '' 'Calle Principal', 12345, '12345678A', true, false, 'https://via.placeholder.com/150'),
+    (UUID(), 'María', 'Gómez', 'Avenida Central', 54321, '98765432B', false, true, 'https://via.placeholder.com/150'),
+    (UUID(), 'Pedro', 'Martínez', 'Calle Nueva', 67890, '45678901C', true, true, 'https://via.placeholder.com/150'),
+    (UUID(), 'Laura', 'López', 'Paseo Grande', 13579, '01234567D', false, false, 'https://via.placeholder.com/150');
