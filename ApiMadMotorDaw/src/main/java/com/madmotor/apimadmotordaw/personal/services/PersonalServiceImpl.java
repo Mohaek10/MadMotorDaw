@@ -37,12 +37,6 @@ public class PersonalServiceImpl implements PersonalService {
     }
 
 
-    @Override
-    public PersonalResponseDTO findByDni(String dni) {
-        log.info("Buscando trabajador@ por dni: " + dni);
-        return personalMapper.toPersonalResponseDto(personalRepository.findByDni(dni).orElseThrow(() -> new PersonalNotFound("Trabajador@ no encontrado")));
-    }
-
 
     @Override
     public PersonalResponseDTO save(PersonalCreateDTO personalCreateDto) {
@@ -51,9 +45,9 @@ public class PersonalServiceImpl implements PersonalService {
     }
 
     @Override
-    public PersonalResponseDTO update(String dni, PersonalUpdateDTO personalUpdateDto) {
-        log.info("Actualizando trabajador@ con dni: " + dni);
-        var personalActualizar = personalRepository.findByDni(dni).orElseThrow(() -> new PersonalNotFound("Trabajador@ no encontrado"));
+    public PersonalResponseDTO update(Long id, PersonalUpdateDTO personalUpdateDto) {
+        log.info("Actualizando trabajador@ con id: " + id);
+        var personalActualizar = personalRepository.findById(id).orElseThrow(() -> new PersonalNotFound("Trabajador@ no encontrado"));
         personalActualizar.setDireccion(personalUpdateDto.getDireccion());
         personalActualizar.setIban(personalUpdateDto.getIban());
 
@@ -61,13 +55,6 @@ public class PersonalServiceImpl implements PersonalService {
         return personalMapper.toPersonalResponseDto(personalActualizado);
     }
 
-
-    @Override
-    public void deleteByDni(String dni) {
-        log.info("Borrando trabajador@ con dni: " + dni);
-        personalRepository.findByDni(dni).orElseThrow(() -> new PersonalNotFound("Trabajador@ con dni: " + dni + " no encontrado"));
-        personalRepository.deleteByDni(dni);
-    }
 
     @Override
     public Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable) {
@@ -83,14 +70,6 @@ public class PersonalServiceImpl implements PersonalService {
                 apellidos.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("apellidos")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        Specification<Personal> specFechaNacimiento = (root, query, criteriaBuilder) ->
-                fechaNacimiento.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("fechaNacimiento")), "%" + m.toLowerCase() + "%"))
-                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
-
-        Specification<Personal> specDireccion = (root, query, criteriaBuilder) ->
-                direccion.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("direccion")), "%" + m.toLowerCase() + "%"))
-                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
-
         Specification<Personal> specIban = (root, query, criteriaBuilder) ->
                 iban.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("iban")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
@@ -98,8 +77,6 @@ public class PersonalServiceImpl implements PersonalService {
         Specification<Personal> criterio = Specification.where(specDni)
                 .and(specNombre)
                 .and(specApellidos)
-                .and(specFechaNacimiento)
-                .and(specDireccion)
                 .and(specIban);
 
 

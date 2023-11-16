@@ -21,11 +21,12 @@ public class PersonalMapper {
                 .build();
     }
 
-    public Personal toPersonal(PersonalUpdateDTO dto) {
+    public Personal toPersonal(PersonalUpdateDTO dto, Personal personal) {
         return Personal.builder()
-                .direccion(dto.getDireccion())
-                .iban(dto.getIban())
+                .direccion(dto.getDireccion()!=null ? dto.getDireccion() : personal.getDireccion())
+                .iban(dto.getIban()!=null ? dto.getIban() : personal.getIban())
                 .build();
+
     }
 
     public PersonalResponseDTO toPersonalResponseDto(Personal dto) {

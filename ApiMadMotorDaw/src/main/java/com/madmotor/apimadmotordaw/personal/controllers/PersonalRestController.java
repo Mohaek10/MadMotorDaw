@@ -3,12 +3,16 @@ package com.madmotor.apimadmotordaw.personal.controllers;
 import com.madmotor.apimadmotordaw.personal.dto.PersonalCreateDTO;
 import com.madmotor.apimadmotordaw.personal.dto.PersonalResponseDTO;
 import com.madmotor.apimadmotordaw.personal.dto.PersonalUpdateDTO;
+import com.madmotor.apimadmotordaw.personal.exceptions.PersonalNotFound;
 import com.madmotor.apimadmotordaw.personal.services.PersonalService;
 import com.madmotor.apimadmotordaw.utils.PageResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
@@ -29,24 +33,18 @@ public class PersonalRestController {
         this.personalService = personalService;
     }
 
-    @GetMapping("/dni/{dni}")
-    public ResponseEntity<PersonalResponseDTO> getPersonalByDni(@PathVariable String dni) {
-        log.info("Buscando personal por dni: " + dni);
-        return ResponseEntity.ok(personalService.findByDni(dni));
-
-    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonalResponseDTO> getPersonalById(@PathVariable Long id) {
+    public ResponseEntity<PersonalResponseDTO> getPersonalById(@PathVariable @Valid Long id) {
         log.info("Buscando personal por id: " + id);
         return ResponseEntity.ok(personalService.findById(id));
 
     }
 
     @PostMapping()
-    public ResponseEntity<PersonalResponseDTO> createPersonal(@RequestBody PersonalCreateDTO personalCreateDTO) {
+    public ResponseEntity<PersonalResponseDTO> createPersonal(@RequestBody @Valid PersonalCreateDTO personalCreateDTO) {
         log.info("Creando personal: " + personalCreateDTO);
-        return ResponseEntity.ok(personalService.save(personalCreateDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(personalService.save(personalCreateDTO));
 
     }
 
@@ -70,17 +68,24 @@ public class PersonalRestController {
 
     }
 
-    @DeleteMapping("/{dni}")
-    public ResponseEntity<Void> deletePersonalByDni(@PathVariable String dni) {
-        log.info("Borrando personal con dni: " + dni);
-        personalService.deleteByDni(dni);
-        return ResponseEntity.noContent().build();
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonalResponseDTO> updatePersonalById(@PathVariable @Valid Long id, @RequestBody @Valid PersonalUpdateDTO personalUpdateDTO) {
+        log.info("Actualizando personal con id: " + id);
+        return ResponseEntity.ok(personalService.update(id, personalUpdateDTO));
     }
 
-    @PutMapping("/{dni}")
-    public ResponseEntity<PersonalResponseDTO> updatePersonalByDni(@PathVariable String dni, @RequestBody PersonalUpdateDTO personalUpdateDTO) {
-        log.info("Actualizando personal con dni: " + dni);
-        return ResponseEntity.ok(personalService.update(dni, personalUpdateDTO));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePersonalById(@PathVariable @Valid Long id) {
+        log.info("Borrando personal con id: " + id);
+        try{
+            personalService.findById(id);
+        } catch (Exception e) {
+            PersonalNotFound personalNotFound = new PersonalNotFound("Personal no encontrado");
+            return ResponseEntity.notFound().build();
+        }
+        personalService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 
