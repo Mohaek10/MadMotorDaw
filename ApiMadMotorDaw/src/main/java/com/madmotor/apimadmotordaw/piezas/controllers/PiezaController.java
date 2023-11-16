@@ -54,7 +54,7 @@ public class PiezaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PiezaResponseDTO> getPiezaById(@PathVariable UUID id) {
+    public ResponseEntity<PiezaResponseDTO> getPiezaById(@PathVariable @Valid UUID id) {
         log.info("Buscando pieza por id: " + id);
         return ResponseEntity.ok(piezaService.findById(id));
     }
@@ -81,7 +81,7 @@ public class PiezaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePieza(@PathVariable UUID id) {
+    public ResponseEntity<Void> deletePieza(@PathVariable @Valid UUID id) {
         log.info("Borrando pieza por id: " + id);
         piezaService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
