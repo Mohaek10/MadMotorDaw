@@ -40,11 +40,12 @@ public class VehiculoRestController {
     public ResponseEntity<PageResponse<Vehiculo>> getAllVehiculos(
             @RequestParam(required = false) Optional<String> marca,
             @RequestParam(required = false) Optional<String> categoria,
+            @RequestParam(required = false) Optional<String> modelo,
             @RequestParam(required = false) Optional<Integer> minYear,
             @RequestParam(required = false) Optional<Boolean> isDelete,
             @RequestParam(required = false) Optional<Double> kmMax,
             @RequestParam(required = false) Optional<Double> precioMax,
-            @RequestParam(required = false) Optional<Double> stockMin,
+            @RequestParam(required = false) Optional<Integer> stockMin,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -55,7 +56,7 @@ public class VehiculoRestController {
                 marca, categoria, minYear, isDelete, kmMax, precioMax, stockMin, page, size, sortBy, direction);
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(PageResponse.of(vehiculoService.findAll(marca, categoria, minYear, isDelete, kmMax, precioMax, stockMin, pageable), sortBy, direction));
+        return ResponseEntity.ok(PageResponse.of(vehiculoService.findAll(marca, categoria,modelo, minYear, isDelete, kmMax, precioMax, stockMin, pageable), sortBy, direction));
     }
 
     @GetMapping("/{id}")

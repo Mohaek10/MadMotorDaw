@@ -2,6 +2,7 @@ package com.madmotor.apimadmotordaw.vehiculos.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.madmotor.apimadmotordaw.categorias.models.Categoria;
 import com.madmotor.apimadmotordaw.categorias.services.CategoriaService;
 import com.madmotor.apimadmotordaw.notificaciones.configurations.WebSocketConfig;
 import com.madmotor.apimadmotordaw.notificaciones.configurations.WebSocketHandler;
@@ -14,6 +15,7 @@ import com.madmotor.apimadmotordaw.vehiculos.exceptions.VehiculoNotFound;
 import com.madmotor.apimadmotordaw.vehiculos.mapper.VehiculoMapper;
 import com.madmotor.apimadmotordaw.vehiculos.models.Vehiculo;
 import com.madmotor.apimadmotordaw.vehiculos.repositories.VehiculoRepository;
+import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,47 +63,46 @@ public class VehiculoServiceImpl implements VehiculoService {
         this.vehiculoNotificacionMapper = vehiculoNotificacionMapper;
     }
 
+
     @Override
-    public Page<Vehiculo> findAll(Optional<String> marca,
-                                  Optional<String> categoria,
-                                  Optional<Integer> minYear,
-                                  Optional<Boolean> isDelete,
-                                  Optional<Double> kmMax,
-                                  Optional<Double> precioMax,
-                                  Optional<Double> stockMin,
-                                  Pageable pageable) {
+    public Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria,Optional<String> modelo,Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double> kmMax, Optional<Double> precioMax, Optional<Integer> stockMin, Pageable pageable) {
 
         Specification<Vehiculo> specMarcaVehiculo = (root, query, criteriaBuilder) ->
-                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m.toLowerCase() + "%"))
+                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
-
-        Specification<Vehiculo> specCategoriaVehiculo = (root, query, criteriaBuilder) ->
-                categoria.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("categoria")), "%" + m.toLowerCase() + "%"))
+        Specification<Vehiculo> specCategoriaProducto = (root, query, criteriaBuilder) ->
+                categoria.map(c -> {
+                    Join<Vehiculo, Categoria> categoriaJoin = root.join("categoria");
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("name")), "%" + c + "%");
+                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+        Specification<Vehiculo> specModeloVehiculo = (root, query, criteriaBuilder) ->
+                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         Specification<Vehiculo> specMinYearVehiculo = (root, query, criteriaBuilder) ->
                 minYear.map(m -> criteriaBuilder.greaterThanOrEqualTo(root.get("year"), m))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+        Specification<Vehiculo> specIsDeleteVehiculo = (root, query, criteriaBuilder) ->
+                isDelete.map(d -> criteriaBuilder.equal(root.get("isDeleted"), d))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         Specification<Vehiculo> specKmMaxVehiculo = (root, query, criteriaBuilder) ->
-                kmMax.map(m -> criteriaBuilder.lessThanOrEqualTo(root.get("km"), m))
+                kmMax.map(k -> criteriaBuilder.lessThanOrEqualTo(root.get("km"), k))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         Specification<Vehiculo> specPrecioMaxVehiculo = (root, query, criteriaBuilder) ->
-                precioMax.map(m -> criteriaBuilder.lessThanOrEqualTo(root.get("precio"), m))
+                precioMax.map(p -> criteriaBuilder.lessThanOrEqualTo(root.get("precio"), p))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         Specification<Vehiculo> specStockMinVehiculo = (root, query, criteriaBuilder) ->
-                stockMin.map(m -> criteriaBuilder.greaterThanOrEqualTo(root.get("stock"), m))
+                stockMin.map(s -> criteriaBuilder.greaterThanOrEqualTo(root.get("stock"), s))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
-        Specification<Vehiculo> specIsDeleteVehiculo = (root, query, criteriaBuilder) ->
-                isDelete.map(m -> criteriaBuilder.equal(root.get("isDelete"), m))
-                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(false)));
-        Specification<Vehiculo> criterio = Specification.where(specMarcaVehiculo)
-                .and(specCategoriaVehiculo)
+        Specification<Vehiculo> criterio=Specification.where(specMarcaVehiculo)
+                .and(specCategoriaProducto)
+                .and(specModeloVehiculo)
                 .and(specMinYearVehiculo)
+                .and(specIsDeleteVehiculo)
                 .and(specKmMaxVehiculo)
                 .and(specPrecioMaxVehiculo)
-                .and(specStockMinVehiculo)
-                .and(specIsDeleteVehiculo);
-
+                .and(specStockMinVehiculo);
         return vehiculoRepository.findAll(criterio, pageable);
+
     }
 
     @Override

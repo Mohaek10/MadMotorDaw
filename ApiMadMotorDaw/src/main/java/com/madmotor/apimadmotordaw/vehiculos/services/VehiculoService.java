@@ -11,7 +11,7 @@ import java.util.Optional;
 
 
 public interface VehiculoService {
-    Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria, Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double>kmMax, Optional<Double> precioMax , Optional<Double> stockMin, Pageable pageable);
+    Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria,Optional<String> modelo, Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double>kmMax, Optional<Double> precioMax , Optional<Integer> stockMin, Pageable pageable);
 
     Vehiculo findById(String id);
 

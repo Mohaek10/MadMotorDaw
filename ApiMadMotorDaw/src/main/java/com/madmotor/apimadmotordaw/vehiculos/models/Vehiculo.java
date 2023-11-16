@@ -58,7 +58,6 @@ public class Vehiculo {
     private String imagen = IMAGE_DEFAULT;
 
     @Column(name = "descripcion", nullable = false)
-    @NotBlank(message = "La descripcion no puede estar vacia")
     private String descripcion;
 
     @CreationTimestamp

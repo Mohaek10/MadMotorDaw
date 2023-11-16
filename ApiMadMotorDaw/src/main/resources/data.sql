@@ -11,5 +11,17 @@ VALUES
     ( '123456789', 'Nombre1', 'Apellido1', '1990-01-01', 'Dirección1', 'ES01234567890123456789'),
     ( '987654321', 'Nombre2', 'Apellido2', '1985-05-15', 'Dirección2', 'ES98765432109876543210'),
     ( '111223344', 'Nombre3', 'Apellido3', '1998-08-30', 'Dirección3', 'ES11112222333344445555');
+INSERT INTO CATEGORIAS ( name)
+VALUES
+    ( 'AUTOMATICO'),
+    ( 'GASOLINA'),
+    ( 'HIBRIDO');
+
+INSERT INTO VEHICULOS(id,marca, modelo,v_year,km,precio,stock,imagen,descripcion,categoria_id)
+VALUES
+    (UUID(),'AUDI','A7',2010,100000,50000,10,'https://via.placeholder.com/150','Descripcion1',1),
+    (UUID(),'BMW','IX',2015,50000,60000,5,'https://via.placeholder.com/150','Descripcion2',2),
+    (UUID(),'MERCEDES','BENZ',2018,20000,200000,8,'https://via.placeholder.com/150','Descripcion3',3),
+    (UUID(),'SEAT','LEON',2019,10000,30000,10,'https://via.placeholder.com/150','Descripcion4',1);
 
 
