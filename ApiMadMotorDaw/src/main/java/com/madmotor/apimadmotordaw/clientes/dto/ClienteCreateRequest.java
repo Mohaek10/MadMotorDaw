@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,26 +25,24 @@ public class ClienteCreateRequest {
    private final String apellido;
 
     @Schema(description = "La direccion del cliente")
-    @Length(min = 1,message = "La direccion debe tener al menos 3 caracteres")
+    @Length(min = 3,message = "La direccion debe tener al menos 3 caracteres")
     @NotBlank(message = "Es necesario conocer su direccion")
    private final String direccion;
 
     @Schema(description = "El codigo postal del cliente")
     @Min(value = 10000,message = "El codigo postal debe tener un minimo de 5 digitos")
-    @NotBlank(message = "Es necesario conocer su codigo postal")
    private final Integer codigoPostal;
 
     @Schema(description = "El dni del cliente")
     @NotBlank(message = "Es necesario conocer su dni")
+    @Pattern(regexp = "^[0-9]{8}[A-Za-z]?$", message = "El DNI debe contener 8 dígitos seguidos de una letra opcional")
    private final String dni;
 
     @Schema(description = "Si el cliente esta interesado en piezas")
-    @NotNull(message = "Es necesario conocer si el cliente está interesado en piezas")
     @Builder.Default
     private final Boolean piezas=true;
 
     @Schema(description = "Si el cliente esta interesado en coches")
-    @NotNull(message = "Es necesario conocer si el cliente está interesado en coches")
     @Builder.Default
     private final Boolean coches=true;
 

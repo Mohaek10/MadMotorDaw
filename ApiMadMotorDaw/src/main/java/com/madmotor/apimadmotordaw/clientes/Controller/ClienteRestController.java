@@ -4,6 +4,7 @@ import com.madmotor.apimadmotordaw.clientes.dto.ClienteCreateRequest;
 import com.madmotor.apimadmotordaw.clientes.dto.ClienteReponse;
 import com.madmotor.apimadmotordaw.clientes.dto.ClienteUpdateRequest;
 import com.madmotor.apimadmotordaw.clientes.services.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -48,13 +49,13 @@ public class ClienteRestController {
 
     @CachePut
     @PostMapping
-    public ResponseEntity<ClienteReponse> createCliente(@RequestBody ClienteCreateRequest clienteCreateRequest){
+    public ResponseEntity<ClienteReponse> createCliente(@Valid @RequestBody ClienteCreateRequest clienteCreateRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.savePost((clienteCreateRequest)));
     }
 
     @CachePut
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteReponse> updateCliente(@PathVariable String id, @RequestBody ClienteUpdateRequest clienteUpdateRequest){
+    public ResponseEntity<ClienteReponse> updateCliente(@PathVariable String id, @Valid@RequestBody ClienteUpdateRequest clienteUpdateRequest){
         return ResponseEntity.ok(clienteService.updateByDni(id,clienteUpdateRequest));
     }
 
