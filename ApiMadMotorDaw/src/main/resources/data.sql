@@ -25,3 +25,7 @@ VALUES
     (UUID(),'SEAT','LEON',2019,10000,30000,10,'https://via.placeholder.com/150','Descripcion4',1);
 
 
+INSERT INTO CLIENTES (id, nombre, apellido, direccion, codigo_Postal, dni, piezas, coches, imagen)
+VALUES
+    (uuid(),'Juan', 'Perez', '' 'Calle Principal', 12345, '12345678A', true, false, 'https://via.placeholder.com/150'),
+    (UUID(), 'María', 'Gómez', 'Avenida Central', 54321, '98765432B', false, true, 'https://via.placeholder.com/150');

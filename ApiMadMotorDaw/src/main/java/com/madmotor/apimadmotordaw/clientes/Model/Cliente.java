@@ -17,25 +17,34 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Cliente")
+@Table(name = "CLIENTES")
 public class Cliente {
     public static final String IMAGE_DEFAULT = "https://via.placeholder.com/150";
-    //Campo inmutable para que el cliente se unico
     @Id
-    @GeneratedValue(generator = "uuid2")
-    private UUID codCliente;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @NonNull
     @NotBlank(message = "Necesitamos conocer su nombre")
+    @Column(name="nombre" ,nullable = false)
     private String nombre;
     @NonNull
     @NotBlank(message="Necesitamos conocer sus apellidos")
+    @Column(name="apellido" ,nullable = false)
     private String apellido;
+    @NonNull
+    @Column(name ="direccion" ,nullable = false)
     private String direccion;
+    @NonNull
+    @Column(name="codigo_Postal" ,nullable = false)
     private Integer codigoPostal;
     @NonNull
     @NotBlank(message = "Es Obligatorio el DNI")
+    @Column(name="dni" ,nullable = false)
     private String dni;
+    @NonNull
+    @Column(name="piezas" ,nullable = false)
     private Boolean piezas;
+    @Column(name="coches" ,nullable = false)
     private Boolean coches;
     @Column(columnDefinition = "TEXT default '" + IMAGE_DEFAULT + "'") // Por defecto una imagen
     @Schema(description = "Foto de perfil del cliente")
