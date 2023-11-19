@@ -6,7 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -29,13 +32,17 @@ public class Categoria {
 
     @CreationTimestamp
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Builder.Default
-    private LocalDateTime createdAt=LocalDateTime.now();
+    //@Builder.Default
+    @CreatedDate //Para que funcione el @CreatedDate hay que añadir @EnableJpaAuditing en la clase principal,
+    // Es parte de Spring Data y pueden manejar automáticamente la fecha de creación
+    private LocalDateTime createdAt;//=LocalDateTime.now();
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Builder.Default
-    private LocalDateTime updatedAt=LocalDateTime.now();
+    //@Builder.Default
+    @LastModifiedDate //Para que funcione el @LastModifiesDate hay que añadir @EnableJpaAuditing en la clase principal,
+    // Es parte de Spring Data y pueden manejar automáticamente la fecha de actualización
+    private LocalDateTime updatedAt;// =LocalDateTime.now();
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     @Builder.Default
