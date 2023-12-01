@@ -22,16 +22,19 @@ repositories {
 }
 
 dependencies {
+    //Dependecias de Spring WEB
     implementation("org.springframework.boot:spring-boot-starter-web")
+    //Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+    //Spring test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     //Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
     //Data JPA
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     //H2 base de datos
-    runtimeOnly("com.h2database:h2")
+    implementation("com.h2database:h2")
     //Validacion
     implementation("org.springframework.boot:spring-boot-starter-validation")
     // Websocket
@@ -42,10 +45,31 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     //OpenApi o swagger para generacion de documentacion
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    //MongoDB JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    //Spring Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    //JWT
+    implementation("com.auth0:java-jwt:4.4.0")
+    //Test Security
+    testImplementation("org.springframework.security:spring-security-test")
+
+
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+/*
+* Esto intenta encontrar la propiedad llamada spring.profiles.active en el proyecto.
+* Si la encuentra, usa ese valor. Si no encuentra la propiedad, establece el valor predeterminado en "dev".
+* Esto permite que la propiedad del sistema sea configurada por medio de la línea de comandos al ejecutar las pruebas o, de lo contrario,
+* usa "dev" como perfil por defecto.
+* */
+
+tasks.test {
+    systemProperty("spring.profiles.active", project.findProperty("spring.profiles.active") ?: "dev")
 }
 
 tasks.bootBuildImage {
