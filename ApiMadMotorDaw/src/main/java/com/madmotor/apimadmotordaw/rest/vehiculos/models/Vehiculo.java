@@ -75,6 +75,7 @@ public class Vehiculo {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+
     @Builder.Default
     @Column(columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
