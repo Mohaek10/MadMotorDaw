@@ -9,13 +9,14 @@ import org.springframework.data.domain.Pageable;
 
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ClienteService {
-    ClienteReponse updateByDni(String dni, ClienteUpdateRequest clienteUpdateRequest);
-    ClienteReponse findByDni(String dni);
+    ClienteReponse updateByID(UUID id, ClienteUpdateRequest clienteUpdateRequest);
+    ClienteReponse findByID(UUID id);
     Page<ClienteReponse> findAll(Optional<String> nombre, Optional<String> apellido, Optional<String> direccion, Optional<Integer>codPostal,Pageable pageable);
-    void deleteByDni(String dni);
+    void deleteById(UUID id);
 
     ClienteReponse savePost(ClienteCreateRequest clienteCreateRequest);
-    ClienteReponse updateImage(String dni, MultipartFile image);
+    ClienteReponse updateImage(UUID id, MultipartFile image);
 }

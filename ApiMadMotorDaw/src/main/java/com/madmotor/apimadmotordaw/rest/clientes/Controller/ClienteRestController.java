@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("${api.version}/clientes")
@@ -54,8 +51,8 @@ public class ClienteRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteReponse> getClienteByDni(@PathVariable String id){
-        return ResponseEntity.ok(clienteService.findByDni(id));
+    public ResponseEntity<ClienteReponse> getClienteByDni(@PathVariable UUID id){
+        return ResponseEntity.ok(clienteService.findByID(id));
     }
 
     @PostMapping
@@ -64,23 +61,23 @@ public class ClienteRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteReponse> updateCliente(@PathVariable String id, @Valid@RequestBody ClienteUpdateRequest clienteUpdateRequest){
-        return ResponseEntity.ok(clienteService.updateByDni(id,clienteUpdateRequest));
+    public ResponseEntity<ClienteReponse> updateCliente(@PathVariable UUID id, @Valid@RequestBody ClienteUpdateRequest clienteUpdateRequest){
+        return ResponseEntity.ok(clienteService.updateByID(id,clienteUpdateRequest));
     }
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ClienteReponse>patchClienteUpdate(@PathVariable String id, @RequestBody ClienteUpdateRequest clienteUpdateRequest){
-        return ResponseEntity.ok(clienteService.updateByDni(id,clienteUpdateRequest));
+    public ResponseEntity<ClienteReponse>patchClienteUpdate(@PathVariable UUID id, @RequestBody ClienteUpdateRequest clienteUpdateRequest){
+        return ResponseEntity.ok(clienteService.updateByID(id,clienteUpdateRequest));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void>deleteCliente(@PathVariable String id) {
-        clienteService.deleteByDni(id);
+    public ResponseEntity<Void>deleteCliente(@PathVariable UUID id) {
+        clienteService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
     @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ClienteReponse> updateImage(@PathVariable String id, @RequestPart("imagen") MultipartFile imagen) {
+    public ResponseEntity<ClienteReponse> updateImage(@PathVariable UUID id, @RequestPart("imagen") MultipartFile imagen) {
         List<String> datosPermitidos = List.of("image/png", "image/jpg", "image/jpeg", "image/gif");
         try {
             String contentType = imagen.getContentType();
