@@ -18,8 +18,6 @@ public class ClienteMapper {
                 .direccion(clienteRequest.getDireccion())
                 .codigoPostal(clienteRequest.getCodigoPostal())
                 .dni(clienteRequest.getDni())
-                .piezas(clienteRequest.getPiezas())
-                .coches(clienteRequest.getCoches())
                 .imagen(clienteRequest.getImagen()!= null? clienteRequest.getImagen() : IMAGE_DEFAULT)
                 .build();
     }
@@ -32,8 +30,6 @@ public class ClienteMapper {
                 .apellido(clienteUpdateRequest.getApellido()!= null && !clienteUpdateRequest.getApellido().isEmpty()? clienteUpdateRequest.getApellido() : cliente.getApellido())
                 .direccion(clienteUpdateRequest.getDireccion()!= null && !clienteUpdateRequest.getDireccion().isEmpty()? clienteUpdateRequest.getDireccion(): cliente.getDireccion())
                 .codigoPostal(clienteUpdateRequest.getCodigoPostal()!= null? clienteUpdateRequest.getCodigoPostal(): cliente.getCodigoPostal())
-                .piezas(clienteUpdateRequest.getPiezas()!= null? clienteUpdateRequest.getPiezas(): cliente.getPiezas())
-                .coches(clienteUpdateRequest.getCoches()!= null? clienteUpdateRequest.getCoches(): cliente.getCoches())
                 .imagen(clienteUpdateRequest.getImagen()!= null? clienteUpdateRequest.getImagen(): cliente.getImagen())
                 .build();
     }
@@ -44,8 +40,6 @@ public class ClienteMapper {
                 .apellido(cliente.getApellido())
                 .direccion(cliente.getDireccion())
                 .codigoPostal(cliente.getCodigoPostal())
-                .piezas(cliente.getPiezas())
-                .coches(cliente.getCoches())
                 .dni(cliente.getDni())
                 .imagen(cliente.getImagen())
                 .build();
@@ -58,8 +52,6 @@ public class ClienteMapper {
                 .apellido(cliente.getApellido())
                 .direccion(cliente.getDireccion())
                 .codigoPostal(cliente.getCodigoPostal())
-                .piezas(cliente.getPiezas())
-                .coches(cliente.getCoches())
                 .dni(cliente.getDni())
                 .imagen(cliente.getImagen())
                 .build();

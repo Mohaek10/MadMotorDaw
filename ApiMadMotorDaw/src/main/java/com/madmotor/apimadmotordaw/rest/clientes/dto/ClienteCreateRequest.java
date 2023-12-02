@@ -38,14 +38,6 @@ public class ClienteCreateRequest {
     @Pattern(regexp = "^[0-9]{8}[A-Za-z]?$", message = "El DNI debe contener 8 dígitos seguidos de una letra opcional")
    private final String dni;
 
-    @Schema(description = "Si el cliente esta interesado en piezas")
-    @Builder.Default
-    private final Boolean piezas=true;
-
-    @Schema(description = "Si el cliente esta interesado en coches")
-    @Builder.Default
-    private final Boolean coches=true;
-
     @Schema(description = "Imagen del cliente")
     @Builder.Default
     private final String imagen = IMAGE_DEFAULT;

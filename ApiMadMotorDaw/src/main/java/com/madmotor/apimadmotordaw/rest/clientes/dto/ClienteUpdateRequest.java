@@ -21,11 +21,6 @@ public class ClienteUpdateRequest {
     @Schema(description = "Codigo postal del cliente")
     private Integer codigoPostal;
 
-    @Schema(description = "Si el cliente ha cambiado de opinion sobre piezas")
-    private Boolean piezas;
-
-    @Schema(description = "Si el cliente ha cambiado de opinion sobre coches")
-    private Boolean coches;
     @Schema(description = "Imagen del cliente")
     private final String imagen;
 }
