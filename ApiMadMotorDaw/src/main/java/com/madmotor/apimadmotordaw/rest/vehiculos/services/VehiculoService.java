@@ -6,6 +6,7 @@ import com.madmotor.apimadmotordaw.rest.vehiculos.dto.VehiculoUpdateDto;
 import com.madmotor.apimadmotordaw.rest.vehiculos.models.Vehiculo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -20,6 +21,8 @@ public interface VehiculoService {
     Vehiculo update(String id, VehiculoUpdateDto vehiculoUpdateDto);
 
     void deleteById(String id);
+
+    Vehiculo updateImage(String id, MultipartFile image, Boolean withUrl);
 
 
 }

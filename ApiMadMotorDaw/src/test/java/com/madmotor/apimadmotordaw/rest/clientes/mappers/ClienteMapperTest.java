@@ -19,8 +19,6 @@ class ClienteMapperTest {
                 .direccion("Calle 123")
                 .codigoPostal(12345)
                 .dni("12345678A")
-                .piezas(false)
-                .coches(false)
                 .imagen("paqui.png")
                 .build();
         var cambio=clienteMapper.toCliente(clienteCreateRequest);
@@ -31,8 +29,6 @@ class ClienteMapperTest {
                 () -> assertEquals(clienteCreateRequest.getDireccion(),cambio.getDireccion()),
                 () -> assertEquals(clienteCreateRequest.getCodigoPostal(),cambio.getCodigoPostal()),
                 () -> assertEquals(clienteCreateRequest.getDni(),cambio.getDni()),
-                () -> assertEquals(clienteCreateRequest.getPiezas(),cambio.getPiezas()),
-                () -> assertEquals(clienteCreateRequest.getCoches(),cambio.getCoches()),
                 () -> assertEquals(clienteCreateRequest.getImagen(),cambio.getImagen())
         );
     }
@@ -44,8 +40,6 @@ class ClienteMapperTest {
                .apellido("Perez")
                .direccion("Calle 123")
                .codigoPostal(12345)
-               .piezas(true)
-               .coches(true)
                .imagen("paqui.png")
                .build();
         Cliente cliente=Cliente.builder()
@@ -54,8 +48,6 @@ class ClienteMapperTest {
                 .direccion("Calle 123")
                 .codigoPostal(12345)
                 .dni(dni)
-                .piezas(false)
-                .coches(false)
                 .imagen("").build();
 
         var resultado=clienteMapper.toCliente(clienteUpdateRequest,cliente);
@@ -64,8 +56,8 @@ class ClienteMapperTest {
                 () -> assertEquals(clienteUpdateRequest.getNombre(),resultado.getNombre()),
                 () -> assertEquals(clienteUpdateRequest.getApellido(),resultado.getApellido()),
                 () -> assertEquals(clienteUpdateRequest.getDireccion(),resultado.getDireccion()),
-                () -> assertEquals(clienteUpdateRequest.getCodigoPostal(),resultado.getCodigoPostal()),
-                () -> assertEquals(clienteUpdateRequest.getPiezas(),resultado.getPiezas()));
+                () -> assertEquals(clienteUpdateRequest.getCodigoPostal(),resultado.getCodigoPostal())
+        );
     }
 
     @Test
@@ -76,8 +68,6 @@ class ClienteMapperTest {
               .direccion("Calle 123")
               .codigoPostal(12345)
                 .dni("12345678A")
-              .piezas(true)
-              .coches(true)
               .imagen("paqui.png")
               .build();
         var resultado=clienteMapper.toClienteReponse(cliente);
@@ -85,7 +75,7 @@ class ClienteMapperTest {
                 () -> assertEquals(cliente.getNombre(),resultado.getNombre()),
                 () -> assertEquals(cliente.getApellido(),resultado.getApellido()),
                 () -> assertEquals(cliente.getDireccion(),resultado.getDireccion()),
-                () -> assertEquals(cliente.getCodigoPostal(),resultado.getCodigoPostal()),
-                () -> assertEquals(cliente.getPiezas(),resultado.getPiezas()));
+                () -> assertEquals(cliente.getCodigoPostal(),resultado.getCodigoPostal())
+        );
     }
 }

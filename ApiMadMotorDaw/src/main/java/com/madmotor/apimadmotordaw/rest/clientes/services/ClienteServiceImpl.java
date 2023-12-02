@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -40,21 +41,21 @@ public class ClienteServiceImpl implements ClienteService{
     }
     @CachePut
     @Override
-    public ClienteReponse updateByDni(String dni, ClienteUpdateRequest clienteUpdateRequest) {
-        log.info("Actualizando el cliente con el DNI número: " + dni);
+    public ClienteReponse updateByID(UUID id, ClienteUpdateRequest clienteUpdateRequest) {
+        log.info("Actualizando el cliente con el UUID número: " + id);
 
         // Buscar el cliente existente por su DNI
-        var clienteActualizar = clienteRepository.findByDniEqualsIgnoreCase(dni)
-                .orElseThrow(() -> new ClienteNotFound(dni));
+        var clienteActualizar = clienteRepository.findById(id)
+                .orElseThrow(() -> new ClienteNotFound(id.toString()));
         var clienteActualizado = clienteRepository.save(clienteMapper.toCliente(clienteUpdateRequest,clienteActualizar));
 
         return clienteMapper.toClienteReponse(clienteActualizado);
     }
     @Cacheable
     @Override
-    public ClienteReponse findByDni(String dni) {
-        log.info("Buscando el cliente con el dni numero : " + dni );
-        return clienteMapper.toClienteReponse(clienteRepository.findByDniEqualsIgnoreCase(dni).orElseThrow(()->new ClienteNotFound(dni)));
+    public ClienteReponse findByID(UUID id) {
+        log.info("Buscando el cliente con el dni numero : " + id );
+        return clienteMapper.toClienteReponse(clienteRepository.findById(id).orElseThrow(()->new ClienteNotFound(id.toString())));
     }
 
     @Override
@@ -86,9 +87,9 @@ public class ClienteServiceImpl implements ClienteService{
 
     @CacheEvict
     @Override
-    public void deleteByDni(String dni) {
-        log.info("Eliminando el cliente con el dni numero : " + dni);
-        var clienteAElminar = clienteRepository.findByDniEqualsIgnoreCase(dni).orElseThrow(() -> new ClienteNotFound(dni));
+    public void deleteById(UUID id) {
+        log.info("Eliminando el cliente con el UUID numero : " + id);
+        var clienteAElminar = clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFound(id.toString()));
         if( clienteAElminar.getImagen()!= null &&!clienteAElminar.getImagen().equals(Cliente.IMAGE_DEFAULT)){
             storageService.delete(clienteAElminar.getImagen());
         }
@@ -107,11 +108,11 @@ public class ClienteServiceImpl implements ClienteService{
     }
     @CachePut
     @Override
-    public ClienteReponse updateImage(String dni, MultipartFile imagen) {
-        log.info("Actualizando la imagen del cliente con el dni numero: " + dni);
+    public ClienteReponse updateImage(UUID id, MultipartFile imagen) {
+        log.info("Actualizando la imagen del cliente con el UUID numero: " + id);
 
 
-        var cliente = clienteRepository.findByDniEqualsIgnoreCase(dni).orElseThrow(() -> new ClienteNotFound(dni));
+        var cliente = clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFound(id.toString()));
         if (cliente.getImagen() != null && !cliente.getImagen().equals(Cliente.IMAGE_DEFAULT)) {
             storageService.delete(cliente.getImagen());
         }

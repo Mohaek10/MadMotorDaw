@@ -41,11 +41,7 @@ public class Cliente {
     @NotBlank(message = "Es Obligatorio el DNI")
     @Column(name="dni" ,nullable = false)
     private String dni;
-    @NonNull
-    @Column(name="piezas" ,nullable = false)
-    private Boolean piezas;
-    @Column(name="coches" ,nullable = false)
-    private Boolean coches;
+
     @Column(columnDefinition = "TEXT default '" + IMAGE_DEFAULT + "'") // Por defecto una imagen
     @Schema(description = "Foto de perfil del cliente")
     @Builder.Default

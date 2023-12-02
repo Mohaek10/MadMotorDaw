@@ -20,8 +20,8 @@ class ClienteRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    Cliente cliente1 = Cliente.builder().nombre("paco").apellido("paquito").direccion("federico").codigoPostal(12345).dni("12345678a").piezas(false).coches(false).build();
-    Cliente cliente2 = Cliente.builder().nombre("marta").apellido("martita").direccion("garcia").codigoPostal(23451).dni("23456789a").piezas(false).coches(false).build();
+    Cliente cliente1 = Cliente.builder().nombre("paco").apellido("paquito").direccion("federico").codigoPostal(12345).dni("12345678a").build();
+    Cliente cliente2 = Cliente.builder().nombre("marta").apellido("martita").direccion("garcia").codigoPostal(23451).dni("23456789a").build();
 
     @BeforeEach
     void setUp() {
@@ -50,8 +50,6 @@ class ClienteRepositoryTest {
                 .direccion("Avenida Central 456")
                 .codigoPostal(67890)
                 .dni("13579246c")
-                .coches(false)
-                .piezas(false)
                 .build();
 
         Cliente clienteGuardado=clienteRepository.save(cliente3);
@@ -72,8 +70,6 @@ class ClienteRepositoryTest {
                 .direccion("Avenida Central 456")
                 .codigoPostal(67890)
                 .dni("13579246c")
-                .coches(false)
-                .piezas(false)
                 .build();
 
         Cliente clienteGuardado=clienteRepository.save(cliente3);

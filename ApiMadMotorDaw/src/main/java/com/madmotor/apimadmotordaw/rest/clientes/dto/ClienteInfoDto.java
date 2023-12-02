@@ -26,11 +26,6 @@ public class ClienteInfoDto {
     @Schema(description = "Dni del cliente")
     private String dni;
 
-    @Schema(description = "Si el cliente esta interesado en piezas")
-    private Boolean piezas;
-
-    @Schema(description = "Si el cliente esta interesado en coches")
-    private Boolean coches;
     @Schema(description = "Imagen del cliente")
     private String imagen;
 }
