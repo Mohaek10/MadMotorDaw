@@ -16,7 +16,7 @@ public interface PedidoService {
 
     ResponsePedidoDto findById(ObjectId idPedido);
 
-    Page<ResponsePedidoDto> findByIdUsuario(Long idUsuario, Pageable pageable);
+    Page<ResponsePedidoDto> findByIdUsuario(String idUsuario, Pageable pageable);
 
     ResponsePedidoDto save(CreatePedidoDto pedido);
 

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Repository
@@ -15,7 +16,7 @@ public interface PedidoRepository extends MongoRepository<Pedido, ObjectId> {
 
 
 
-    Page<Pedido> findByIdUsuario(Long idUsuario, Pageable pageable);
+    Page<Pedido> findByIdUsuario(UUID idUsuario, Pageable pageable);
 
     List<Pedido> findPedidosIdsByIdUsuario(Long idUsuario);
 

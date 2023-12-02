@@ -14,7 +14,7 @@ public class UpdatePedidoDto {
     private String idPedido;
 
     @NotNull(message = "El id del usuario no puede ser nulo y tiene que ser un UUID")
-    private UUID idUsuario;
+    private String idUsuario;
 
     @NotNull(message = "Los items del pedido no pueden ser nulos")
     private List<ItemPedido> lineasPedido;

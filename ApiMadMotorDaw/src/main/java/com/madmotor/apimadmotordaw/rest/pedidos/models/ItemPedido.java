@@ -22,10 +22,8 @@ public class ItemPedido {
     @Min(value = 0, message = "La cantidad de piezas no puede ser negativa")
     private Integer cantidadPiezas = 0;
 
-    @NotNull(message = "El id del vehiculo no puede ser nulo")
     private UUID idVehiculo;
 
-    @NotNull(message = "El id de la pieza no puede ser nulo")
     private UUID idPieza;
 
     @Min(value = 0, message = "El precio del producto no puede ser negativo")

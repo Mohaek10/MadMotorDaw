@@ -9,11 +9,13 @@ import com.madmotor.apimadmotordaw.rest.pedidos.dto.UpdatePedidoDto;
 import com.madmotor.apimadmotordaw.rest.pedidos.models.Pedido;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class PedidoMapper {
     public Pedido toPedido(CreatePedidoDto createPedidoDto, ClienteInfoDto clientedto) {
         return Pedido.builder()
-                .idUsuario(createPedidoDto.getIdUsuario())
+                .idUsuario(UUID.fromString(createPedidoDto.getIdUsuario()))
                 .cliente(Cliente.builder()
                         .id(clientedto.getId())
                         .nombre(clientedto.getNombre())
@@ -33,7 +35,7 @@ public class PedidoMapper {
     public Pedido toPedido(UpdatePedidoDto updatePedidoDto, Pedido pedido, ClienteInfoDto clientedto) {
         return Pedido.builder()
                 .id(pedido.getId())
-                .idUsuario(updatePedidoDto.getIdUsuario() != null ? updatePedidoDto.getIdUsuario() : pedido.getIdUsuario())
+                .idUsuario(updatePedidoDto.getIdUsuario() != null ? UUID.fromString(updatePedidoDto.getIdUsuario()) : pedido.getIdUsuario())
                 .cliente(clientedto != null ? Cliente.builder()
                         .id(clientedto.getId())
                         .nombre(clientedto.getNombre())

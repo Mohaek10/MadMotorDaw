@@ -1,11 +1,13 @@
 package com.madmotor.apimadmotordaw.rest.clientes.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
+@Builder
 public class ClienteInfoDto {
     private UUID id;
 

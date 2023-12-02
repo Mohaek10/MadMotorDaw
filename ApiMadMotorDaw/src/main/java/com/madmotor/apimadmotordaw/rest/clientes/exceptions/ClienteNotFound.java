@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ClienteNotFound extends ClienteException{
 
     public ClienteNotFound(String dni) {
-        super("El cliente no existe con el dni numero : "+dni+" no fue encontrado");
+        super("El cliente no existe con el UUID : "+dni+" no fue encontrado");
     }
 }
