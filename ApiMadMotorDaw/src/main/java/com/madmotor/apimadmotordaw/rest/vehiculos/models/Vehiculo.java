@@ -25,7 +25,7 @@ public class Vehiculo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     @Column(name = "marca", nullable = false)
     @NotBlank(message = "Debe de tener una marca")

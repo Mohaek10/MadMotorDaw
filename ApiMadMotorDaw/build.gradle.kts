@@ -48,7 +48,7 @@ dependencies {
     //MongoDB JPA
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     //Spring Security
-   // implementation("org.springframework.boot:spring-boot-starter-security")
+    //implementation("org.springframework.boot:spring-boot-starter-security")
     //JWT
     implementation("com.auth0:java-jwt:4.4.0")
     //Test Security

@@ -2,6 +2,7 @@ package com.madmotor.apimadmotordaw.rest.clientes.mappers;
 
 import com.madmotor.apimadmotordaw.rest.clientes.Model.Cliente;
 import com.madmotor.apimadmotordaw.rest.clientes.dto.ClienteCreateRequest;
+import com.madmotor.apimadmotordaw.rest.clientes.dto.ClienteInfoDto;
 import com.madmotor.apimadmotordaw.rest.clientes.dto.ClienteReponse;
 import com.madmotor.apimadmotordaw.rest.clientes.dto.ClienteUpdateRequest;
 import org.springframework.stereotype.Component;
@@ -49,4 +50,19 @@ public class ClienteMapper {
                 .imagen(cliente.getImagen())
                 .build();
     }
+
+    public ClienteInfoDto toClienteInfoDto(Cliente cliente) {
+        return ClienteInfoDto.builder()
+                .id(cliente.getId())
+                .nombre(cliente.getNombre())
+                .apellido(cliente.getApellido())
+                .direccion(cliente.getDireccion())
+                .codigoPostal(cliente.getCodigoPostal())
+                .piezas(cliente.getPiezas())
+                .coches(cliente.getCoches())
+                .dni(cliente.getDni())
+                .imagen(cliente.getImagen())
+                .build();
+    }
+
 }
