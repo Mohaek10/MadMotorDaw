@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface PedidoService {
 
-    Page<ResponsePedidoDto> findAll(Optional<Boolean> isDeleted , Pageable pageable);
+    Page<ResponsePedidoDto> findAll( Pageable pageable);
 
     ResponsePedidoDto findById(ObjectId idPedido);
 

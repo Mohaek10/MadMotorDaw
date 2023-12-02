@@ -54,7 +54,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public Page<ResponsePedidoDto> findAll(Optional<Boolean> isDeleted, Pageable pageable) {
+    public Page<ResponsePedidoDto> findAll(Pageable pageable) {
         log.info("Buscando todos los pedidos");
         return pedidoRepository.findAll(pageable).map(pedidoMapper::toResponsePedidoDto);
     }
