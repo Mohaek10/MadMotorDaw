@@ -6,6 +6,7 @@ import com.madmotor.apimadmotordaw.rest.categorias.models.Categoria;
 import com.madmotor.apimadmotordaw.rest.categorias.services.CategoriaService;
 import com.madmotor.apimadmotordaw.config.websockets.WebSocketConfig;
 import com.madmotor.apimadmotordaw.config.websockets.WebSocketHandler;
+import com.madmotor.apimadmotordaw.rest.storage.service.StorageService;
 import com.madmotor.apimadmotordaw.websockets.notificaciones.dto.VehiculoNotificacionDto;
 import com.madmotor.apimadmotordaw.websockets.notificaciones.mapper.VehiculoNotificacionMapper;
 import com.madmotor.apimadmotordaw.websockets.notificaciones.models.Notificacion;
@@ -16,6 +17,7 @@ import com.madmotor.apimadmotordaw.rest.vehiculos.repositories.VehiculoRepositor
 import com.madmotor.apimadmotordaw.rest.vehiculos.mapper.VehiculoMapper;
 import com.madmotor.apimadmotordaw.rest.vehiculos.models.Vehiculo;
 import jakarta.persistence.criteria.Join;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -48,24 +51,27 @@ public class VehiculoServiceImpl implements VehiculoService {
     private final VehiculoMapper vehiculoMapper;
     private final ObjectMapper mapper;
 
+    private final StorageService storageService;
+
     @Autowired
     public VehiculoServiceImpl(VehiculoRepository vehiculoRepository,
                                VehiculoMapper vehiculoMapper,
                                CategoriaService categoriaService,
                                WebSocketConfig webSocketConfig,
-                               VehiculoNotificacionMapper vehiculoNotificacionMapper) {
+                               VehiculoNotificacionMapper vehiculoNotificacionMapper, StorageService storageService) {
         this.vehiculoRepository = vehiculoRepository;
         this.categoriaService = categoriaService;
         this.vehiculoMapper = vehiculoMapper;
         this.webSocketConfig = webSocketConfig;
         webSocketService = webSocketConfig.webSocketVehiculo();
+        this.storageService = storageService;
         mapper = new ObjectMapper();
         this.vehiculoNotificacionMapper = vehiculoNotificacionMapper;
     }
 
 
     @Override
-    public Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria,Optional<String> modelo,Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double> kmMax, Optional<Double> precioMax, Optional<Integer> stockMin, Pageable pageable) {
+    public Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double> kmMax, Optional<Double> precioMax, Optional<Integer> stockMin, Pageable pageable) {
 
         Specification<Vehiculo> specMarcaVehiculo = (root, query, criteriaBuilder) ->
                 marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%"))
@@ -93,7 +99,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         Specification<Vehiculo> specStockMinVehiculo = (root, query, criteriaBuilder) ->
                 stockMin.map(s -> criteriaBuilder.greaterThanOrEqualTo(root.get("stock"), s))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
-        Specification<Vehiculo> criterio=Specification.where(specMarcaVehiculo)
+        Specification<Vehiculo> criterio = Specification.where(specMarcaVehiculo)
                 .and(specCategoriaVehiculo)
                 .and(specModeloVehiculo)
                 .and(specMinYearVehiculo)
@@ -138,7 +144,8 @@ public class VehiculoServiceImpl implements VehiculoService {
         var categoriaNueva = categoriaService.findByName(vehiculoUpdateDto.getCategoria());
 
         // Si la categoría actualizada no existe, usar la categoría actual del vehículo
-        if (categoriaNueva == null) {categoriaNueva = categoriaActual;
+        if (categoriaNueva == null) {
+            categoriaNueva = categoriaActual;
         }
 
         // Guardar el vehículo actualizado con la categoría correspondiente
@@ -172,6 +179,38 @@ public class VehiculoServiceImpl implements VehiculoService {
         }
     }
 
+    @Override
+    @Transactional
+    public Vehiculo updateImage(String id, MultipartFile image, Boolean withUrl) {
+        log.info("Actualizando imagen del vehiculo con id: " + id);
+        var vehiculoActual = vehiculoRepository.findById(UUID.fromString(id)).orElseThrow(() -> new VehiculoNotFound(id));
+        if (vehiculoActual.getImagen() != null && !vehiculoActual.getImagen().equals(Vehiculo.IMAGE_DEFAULT)) {
+            storageService.delete(vehiculoActual.getImagen());
+        }
+        var imagen = storageService.store(image);
+
+        String imageUrl = !withUrl ? imagen : storageService.getUrl(imagen);
+
+        var vehiculoActualizado = Vehiculo.builder()
+                .id(vehiculoActual.getId())
+                .marca(vehiculoActual.getMarca())
+                .modelo(vehiculoActual.getModelo())
+                .year(vehiculoActual.getYear())
+                .km(vehiculoActual.getKm())
+                .precio(vehiculoActual.getPrecio())
+                .stock(vehiculoActual.getStock())
+                .imagen(imageUrl)
+                .descripcion(vehiculoActual.getDescripcion())
+                .createdAt(vehiculoActual.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .categoria(vehiculoActual.getCategoria())
+                .isDeleted(vehiculoActual.getIsDeleted())
+                .build();
+        var vehiculoGuardado = vehiculoRepository.save(vehiculoActualizado);
+        onChange(Notificacion.Tipo.UPDATE, vehiculoGuardado);
+        return vehiculoGuardado;
+    }
+
     public void onChange(Notificacion.Tipo tipo, Vehiculo data) {
         log.info("Servicio de vehiculo onChange con tipo: " + tipo + " y datos: " + data);
         try {
@@ -188,10 +227,12 @@ public class VehiculoServiceImpl implements VehiculoService {
 
             Thread senderThread = new Thread(() -> {
                 try {
-                    webSocketService.sendMessage(json); } catch (Exception e) {
+                    webSocketService.sendMessage(json);
+                } catch (Exception e) {
                 }
             });
-            senderThread.start();} catch (JsonProcessingException e) {
+            senderThread.start();
+        } catch (JsonProcessingException e) {
         }
     }
 

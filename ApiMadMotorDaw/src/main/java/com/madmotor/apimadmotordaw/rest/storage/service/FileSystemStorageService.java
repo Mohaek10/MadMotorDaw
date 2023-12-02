@@ -1,11 +1,9 @@
 package com.madmotor.apimadmotordaw.rest.storage.service;
-
 import com.madmotor.apimadmotordaw.rest.storage.controllers.StorageController;
+import com.madmotor.apimadmotordaw.rest.storage.exceptions.StorageBadRequest;
 import com.madmotor.apimadmotordaw.rest.storage.exceptions.StorageInternal;
 import com.madmotor.apimadmotordaw.rest.storage.exceptions.StorageNotFound;
-import com.madmotor.apimadmotordaw.rest.storage.exceptions.StorageBadRequest;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -24,27 +22,28 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
+
+/**
+ * Implementación de un {@link StorageService} que almacena
+ * los ficheros subidos dentro del servidor donde se ha desplegado
+ * la apliacación.
+ * <p>
+ * ESTO SE REALIZA ASÍ PARA NO HACER MÁS COMPLEJO EL EJEMPLO.
+ * EN UNA APLICACIÓN EN PRODUCCIÓN POSIBLEMENTE SE UTILICE
+ * UN ALMACÉN REMOTO, solo habría que cambiar la implementación de estos métodos.
+ *
+ * @author Equipo de desarrollo de Spring
+ */
 @Service
 @Slf4j
 public class FileSystemStorageService implements StorageService {
+
     // Directorio raiz de nuestro almacén de ficheros
     private final Path rootLocation;
 
+
     public FileSystemStorageService(@Value("${upload.root-location}") String path) {
         this.rootLocation = Paths.get(path);
-    }
-
-    /**
-     * Método que inicializa el almacenamiento secundario del proyecto
-     */
-    @Override
-    public void init() {
-        log.info("Inicializando almacenamiento");
-        try {
-            Files.createDirectories(rootLocation);
-        } catch (IOException e) {
-            throw new StorageInternal("No se puede inicializar el almacenamiento " + e);
-        }
     }
 
     /**
@@ -104,21 +103,21 @@ public class FileSystemStorageService implements StorageService {
         }
 
     }
+
     /**
      * Método que es capaz de cargar un fichero a partir de su nombre
-     * @param filename Nombre del fichero.
-     * @return Objeto de tipo Path.
+     * Devuelve un objeto de tipo Path
      */
     @Override
     public Path load(String filename) {
         log.info("Cargando fichero " + filename);
         return rootLocation.resolve(filename);
     }
+
+
     /**
      * Método que es capaz de cargar un fichero a partir de su nombre
-     * @param filename Nombre del fichero.
-     * @throws StorageNotFound Si no se puede leer el fichero
-     *  * Devuelve un objeto de tipo Resource
+     * Devuelve un objeto de tipo Resource
      */
     @Override
     public Resource loadAsResource(String filename) {
@@ -127,8 +126,6 @@ public class FileSystemStorageService implements StorageService {
             Path file = load(filename);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
-                log.info("Ruta del archivo: " + file.toString());
-                log.error("El fichero: " + file.toString() );
                 return resource;
             } else {
                 throw new StorageNotFound("No se puede leer fichero: " + filename);
@@ -137,6 +134,8 @@ public class FileSystemStorageService implements StorageService {
             throw new StorageNotFound("No se puede leer fichero: " + filename + " " + e);
         }
     }
+
+
     /**
      * Método que elimina todos los ficheros del almacenamiento
      * secundario del proyecto.
@@ -148,27 +147,20 @@ public class FileSystemStorageService implements StorageService {
     }
 
 
-
     /**
-     * Método que devuelve la URL de un fichero a partir de su nombre
-     * @param filename Nombre del fichero.
-     * @return URL del fichero en formato String.
+     * Método que inicializa el almacenamiento secundario del proyecto
      */
     @Override
-    public String getUrl(String filename) {
-        log.info("Obteniendo URL del fichero " + filename);
-        return MvcUriComponentsBuilder
-                // El segundo argumento es necesario solo cuando queremos obtener la imagen
-                // En este caso tan solo necesitamos obtener la URL
-                .fromMethodName(StorageController.class, "serveFile", filename, null)
-                .build().toUriString();
+    public void init() {
+        log.info("Inicializando almacenamiento");
+        try {
+            Files.createDirectories(rootLocation);
+        } catch (IOException e) {
+            throw new StorageInternal("No se puede inicializar el almacenamiento " + e);
+        }
     }
-    /**
-     * Método que elimina un fichero del almacenamiento
-     *
-     * @param filename Nombre del fichero a eliminar.
-     * @throws StorageInternal Si no se puede eliminar el fichero.
-     */
+
+
     @Override
     public void delete(String filename) {
         String justFilename = StringUtils.getFilename(filename);
@@ -181,4 +173,19 @@ public class FileSystemStorageService implements StorageService {
         }
 
     }
+
+    /**
+     * Método que devuelve la URL de un fichero a partir de su nombre
+     * Devuelve un objeto de tipo String
+     */
+    @Override
+    public String getUrl(String filename) {
+        log.info("Obteniendo URL del fichero " + filename);
+        return MvcUriComponentsBuilder
+                // El segundo argumento es necesario solo cuando queremos obtener la imagen
+                // En este caso tan solo necesitamos obtener la URL
+                .fromMethodName(StorageController.class, "serveFile", filename, null)
+                .build().toUriString();
+    }
+
 }
