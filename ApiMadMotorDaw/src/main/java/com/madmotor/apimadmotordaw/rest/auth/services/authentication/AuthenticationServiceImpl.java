@@ -22,9 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Implementación de nuestro servicio de autenticación
- */
 @Service
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -42,12 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    /**
-     * Registra un usuario
-     *
-     * @param request datos del usuario
-     * @return Token de autenticación
-     */
+
     @Override
     public JwtAuthResponse signUp(UserSignUpRequest request) {
         log.info("Creando usuario: {}", request);
@@ -61,7 +53,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .roles(Stream.of(Role.USER).collect(Collectors.toSet()))
                     .build();
             try {
-                // Salvamos y devolvemos el token
                 var userStored = authUsersRepository.save(user);
                 return JwtAuthResponse.builder().token(jwtService.generateToken(userStored)).build();
             } catch (DataIntegrityViolationException ex) {
@@ -73,16 +64,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    /**
-     * Autentica un usuario
-     *
-     * @param request datos del usuario
-     * @return Token de autenticación
-     */
+
     @Override
     public JwtAuthResponse signIn(UserSignInRequest request) {
         log.info("Autenticando usuario: {}", request);
-        // Autenticamos y devolvemos el token
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = authUsersRepository.findByUsername(request.getUsername())

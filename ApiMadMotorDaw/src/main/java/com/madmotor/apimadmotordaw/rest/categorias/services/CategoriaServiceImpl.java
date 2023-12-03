@@ -53,7 +53,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Si no se pasa el nombre, se devuelve true
         //Criterio de busqueda por nombre
         Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
-                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + m + "%"))
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         //Criterio de busqueda por borrado
         // Si no se pasa el borrado, se devuelve true
@@ -74,7 +74,7 @@ public class CategoriaServiceImpl implements CategoriaService {
      */
 
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Categoria findById(Long id) {
         // Se busca la categoria por su id y si no se encuentra se devuelve una excepcion
         return categoriaRepository.findById(id)
@@ -88,7 +88,7 @@ public class CategoriaServiceImpl implements CategoriaService {
      * @throws CategoriaNotFound si no se encuentra la categoria 404
      */
     @Override
-    @Cacheable
+    @Cacheable(key = "#name")
     public Categoria findByName(String name) {
         // Se busca la categoria por su nombre y si no se encuentra se devuelve una excepcion
         return categoriaRepository.findByNameEqualsIgnoreCase(name)
@@ -101,7 +101,7 @@ public class CategoriaServiceImpl implements CategoriaService {
      * @throws CategoriaExists si ya existe una categoria con ese nombre
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria save(CategoriaDto categoria) {
         // Se comprueba si ya existe una categoria con ese nombre
         if (categoriaRepository.findByNameEqualsIgnoreCase(categoria.getName()).isEmpty()) {
@@ -124,7 +124,7 @@ public class CategoriaServiceImpl implements CategoriaService {
      * @throws CategoriaNotFound si no se encuentra la categoria 404
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria update(Long id, CategoriaDto catDto) {
         // Se comprueba si ya existe una categoria con ese nombre y si no lanza una excepcion 404 not found
         Categoria categoriaActual = findById(id);

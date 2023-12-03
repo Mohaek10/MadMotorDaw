@@ -25,9 +25,8 @@ public interface UsersRepository extends JpaRepository<User, UUID>, JpaSpecifica
     // Categorias por nombre
     List<User> findAllByUsernameContainingIgnoreCase(String username);
 
-    @Modifying // Para indicar que es una consulta de actualización
+    @Modifying
     @Query("UPDATE User p SET p.isDeleted = true WHERE p.id = :id")
-        // Consulta de actualización
     void updateIsDeletedToTrueById(UUID id);
 
 }
