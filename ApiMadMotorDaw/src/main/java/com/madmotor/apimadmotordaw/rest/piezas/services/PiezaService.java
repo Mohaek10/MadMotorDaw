@@ -13,6 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Interfaz PiezaService
+ *
+ * En esta interfaz se definen los métodos que se utilizarán en el PiezaServiceImpl
+ * @version 1.0
+ * @Author Rubén Fernández
+ */
+
 public interface PiezaService {
     Page<PiezaResponseDTO> findAll(Optional<String> name, Optional<String> description, Optional<Double> price, Optional<Integer> stock, Pageable pageable);
 

@@ -24,7 +24,17 @@ import org.springframework.data.domain.Pageable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
+/**
+ * Controlador del personal del tipo RestController
+ *
+ * Con esta clase fijamos la ruta de acceso a este controlador con la anotación @RequestMapping
+ *
+ * @Autowired es una anotación que nos permite inyectar dependencias en las anotaciones @Controller, @Service, @Component, ...
+ * que se encuentren en nuestro contenedor Spring.
+ *
+ * @version 1.0
+ * @author Miguel Vicario
+*/
 @RestController
 @Slf4j
 @RequestMapping("${api.version}/personal")
@@ -37,6 +47,13 @@ public class PersonalRestController {
         this.personalService = personalService;
     }
 
+    /**
+     * Obtiene todo el personal por su id
+     *
+     * @param id id del personal
+     * @return ids del personal encontrado
+     * @throws PersonalNotFound si no se encuentra el personal con el id (404)
+     */
 
     @GetMapping("/{id}")
     public ResponseEntity<PersonalResponseDTO> getPersonalById(@PathVariable @Valid Long id) {
@@ -45,12 +62,38 @@ public class PersonalRestController {
 
     }
 
+    /**
+     * Crea un nuevo personal
+     *
+     * @param personalCreateDTO personal a crear basado en el DTO de creación del personal
+     * @return los parámetros del personal creado
+     * @throws com.madmotor.apimadmotordaw.rest.personal.exceptions.PersonalFailSave si el personal no se ha podido crear
+     */
+
     @PostMapping()
 
     public ResponseEntity<PersonalResponseDTO> createPersonal(@Valid @RequestBody PersonalCreateDTO personalCreateDTO) {
         log.info("Creando personal: " + personalCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(personalService.save(personalCreateDTO));
     }
+
+    /**
+     * Obtiene todo el personal
+     *
+     * @param dni dni del personal
+     * @param nombre nombre del personal
+     * @param apellidos apellidos del personal
+     * @param fechaNacimiento fecha de nacimiento del personal
+     * @param direccion direccion del personal
+     * @param iban iban del personal
+     * @param sueldo sueldo del personal
+     * @param telefono telefono del personal
+     * @param page numero de pagina
+     * @param size tamaño de la pagina
+     * @param sortBy ordenar por
+     * @param order orden ascendente o descendente
+     * @return todos los parámetros del personal encontrado
+     */
 
     @GetMapping()
     public ResponseEntity<PageResponse<PersonalResponseDTO>> getAllPersonal(
@@ -74,12 +117,26 @@ public class PersonalRestController {
 
     }
 
+    /**
+     * Actualiza un personal
+     * @param id id del personal
+     * @param personalUpdateDTO
+     * @return los parámetros del personal actualizado
+     * @throws PersonalNotFound si no se encuentra el personal con el id proporcionado (404)
+     */
 
     @PutMapping("/{id}")
     public ResponseEntity<PersonalResponseDTO> updatePersonalById(@PathVariable @Valid Long id, @RequestBody @Valid PersonalUpdateDTO personalUpdateDTO) {
         log.info("Actualizando personal con id: " + id);
         return ResponseEntity.ok(personalService.update(id, personalUpdateDTO));
     }
+
+    /**
+     * Elimina a un personal
+     * @param id id del personal
+     * @return el personal borrado
+     * @throws PersonalNotFound si no se encuentra el personal con el id proporcionado (404)
+     */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePersonalById(@PathVariable @Valid Long id) {
@@ -93,6 +150,13 @@ public class PersonalRestController {
         personalService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Manejador de excepciones
+     * @param ex excepcion
+     * @return  Mapa de errores de validación con el campo y el mensaje
+     */
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
