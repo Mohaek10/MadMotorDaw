@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.stream.Stream;
 
 
@@ -57,23 +58,34 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public String store(MultipartFile file) {
+        // Lista de extensiones permitidas
+        List<String> extensionAcepted = List.of("png", "jpg", "jpeg", "gif");
+        // Obtenemos el nombre del fichero
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        // Obtenemos la extensión del fichero
         String extension = StringUtils.getFilenameExtension(filename);
+        // Comprobamos que la extensión del fichero sea una de las permitidas
+        if (!extensionAcepted.contains(extension)) {
+            throw new StorageBadRequest("Extensión no permitida " + extension);
+        }
+        // Obtenemos el nombre del fichero sin la extensión
         String justFilename = filename.replace("." + extension, "");
-        // Nombre del fichero almacenado aleatorio para evitar duplicados y sin espacios
+        // Nombre del fichero almacenado aleatorio para evitar duplicados y sin espacios añadiendo al final la extensión
         String storedFilename = System.currentTimeMillis() + "_" + justFilename.replaceAll("\\s+", "") + "." + extension;
 
         try {
+            // Comprobamos que el fichero no esté vacío
             if (file.isEmpty()) {
                 throw new StorageBadRequest("Fichero vacío " + filename);
             }
+            // Comprobamos que el nombre del fichero no contenga caracteres no permitidos
             if (filename.contains("..")) {
                 // This is a security check
                 throw new StorageBadRequest(
                         "No se puede almacenar un fichero con una ruta relativa fuera del directorio actual "
                                 + filename);
             }
-
+            // Almacenamos el fichero
             try (InputStream inputStream = file.getInputStream()) {
                 log.info("Almacenando fichero " + filename + " como " + storedFilename);
                 Files.copy(inputStream, this.rootLocation.resolve(storedFilename),
@@ -95,6 +107,7 @@ public class FileSystemStorageService implements StorageService {
     public Stream<Path> loadAll() {
         log.info("Cargando todos los ficheros almacenados");
         try {
+            // Devolvemos un Stream con la ruta de todos los ficheros almacenados
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);

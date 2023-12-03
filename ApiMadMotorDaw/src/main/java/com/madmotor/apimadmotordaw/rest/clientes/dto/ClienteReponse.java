@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -14,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Schema(description = "Cliente a devolver")
 public class ClienteReponse {
+    @Schema(description = "Identificador del cliente")
     private UUID id;
 
     @Schema(description = "Nombre del cliente")
@@ -33,4 +35,13 @@ public class ClienteReponse {
 
     @Schema(description = "Imagen del cliente")
     private String imagen;
+
+    @Schema(description = "Boolean del cliente")
+    private Boolean isDeleted;
+
+    @Schema(description = "Fecha de creación del cliente")
+    private LocalDateTime createdAt;
+
+    @Schema(description = "Fecha de actualización del cliente")
+    private LocalDateTime updatedAt;
 }
