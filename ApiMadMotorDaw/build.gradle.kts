@@ -53,6 +53,9 @@ dependencies {
     implementation("com.auth0:java-jwt:4.4.0")
     //Test Security
     testImplementation("org.springframework.security:spring-security-test")
+    //Swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+
 
 
 }
