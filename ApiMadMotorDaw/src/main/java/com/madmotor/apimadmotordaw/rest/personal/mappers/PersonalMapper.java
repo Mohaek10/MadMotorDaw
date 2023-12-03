@@ -18,6 +18,8 @@ public class PersonalMapper {
                 .fechaNacimiento(dto.getFechaNacimiento())
                 .direccion(dto.getDireccion())
                 .iban(dto.getIban())
+                .sueldo(dto.getSueldo())
+                .telefono(dto.getTelefono())
                 .build();
     }
 
@@ -25,6 +27,8 @@ public class PersonalMapper {
         return Personal.builder()
                 .direccion(dto.getDireccion()!=null ? dto.getDireccion() : personal.getDireccion())
                 .iban(dto.getIban()!=null ? dto.getIban() : personal.getIban())
+                .sueldo(dto.getSueldo()!=null ? dto.getSueldo() : personal.getSueldo())
+                .telefono(dto.getTelefono()!=null ? dto.getTelefono() : personal.getTelefono())
                 .build();
 
     }
@@ -38,6 +42,8 @@ public class PersonalMapper {
                 .fechaNacimiento(dto.getFechaNacimiento())
                 .direccion(dto.getDireccion())
                 .iban(dto.getIban())
+                .sueldo(dto.getSueldo())
+                .telefono(dto.getTelefono())
                 .build();
     }
 }

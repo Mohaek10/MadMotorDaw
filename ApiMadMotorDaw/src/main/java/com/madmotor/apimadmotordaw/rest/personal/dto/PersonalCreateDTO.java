@@ -3,13 +3,14 @@ package com.madmotor.apimadmotordaw.rest.personal.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDate;
+
 
 @Builder
 @Data
@@ -41,4 +42,12 @@ public class PersonalCreateDTO {
     @NotBlank
     @Length(min = 20, max = 20, message = "La cuenta de banco debe de contener 20 caracteres, los dos primeros son ES y los demás dígitos")
     private String iban;
+
+    @NotBlank
+    @Positive
+    private Double sueldo;
+
+    @NotBlank
+    @Length(min = 9, max = 9, message = "El teléfono debe de tener 9 caracteres")
+    private String telefono;
 }

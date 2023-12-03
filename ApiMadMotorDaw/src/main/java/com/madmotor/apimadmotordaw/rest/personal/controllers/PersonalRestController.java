@@ -60,6 +60,8 @@ public class PersonalRestController {
             @RequestParam (required = false) Optional<String> fechaNacimiento,
             @RequestParam (required = false) Optional<String> direccion,
             @RequestParam (required = false) Optional<String> iban,
+            @RequestParam (required = false) Optional<Double> sueldo,
+            @RequestParam (required = false) Optional<String> telefono,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -68,7 +70,7 @@ public class PersonalRestController {
         log.info("Buscando personal con los siguientes filtros:");
         Sort sort =order.equalsIgnoreCase("asc")?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page,size,sort);
-        return ResponseEntity.ok(PageResponse.of(personalService.findAll(dni, nombre, apellidos, fechaNacimiento, direccion, iban, pageable), sortBy, order));
+        return ResponseEntity.ok(PageResponse.of(personalService.findAll(dni, nombre, apellidos, fechaNacimiento, direccion, iban, sueldo, telefono, pageable), sortBy, order));
 
     }
 
@@ -96,7 +98,7 @@ public class PersonalRestController {
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);

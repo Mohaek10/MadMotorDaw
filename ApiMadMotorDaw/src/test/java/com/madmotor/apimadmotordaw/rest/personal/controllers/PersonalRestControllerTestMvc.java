@@ -131,7 +131,7 @@ class PersonalRestControllerTestMvc {
         var personalList = List.of(testResponseDTO1, testResponseDTO2);
         var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
         var page = new PageImpl<>(personalList);
-        when(personalService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
+        when(personalService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
         MockHttpServletResponse response = mockMvc.perform(get(myEndpoint).accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         PageResponse<PersonalResponseDTO> personalResponse = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {
         });
@@ -140,7 +140,7 @@ class PersonalRestControllerTestMvc {
                 () -> assertEquals(2, personalResponse.totalElements()),
                 () -> assertEquals(1, personalResponse.totalPages()),
                 () -> assertEquals(2, personalResponse.content().size()));
-        Mockito.verify(personalService, Mockito.times(1)).findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
+        Mockito.verify(personalService, Mockito.times(1)).findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
     }
 

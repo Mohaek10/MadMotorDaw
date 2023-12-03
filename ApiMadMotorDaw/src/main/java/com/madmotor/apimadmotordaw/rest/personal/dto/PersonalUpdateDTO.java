@@ -1,5 +1,6 @@
 package com.madmotor.apimadmotordaw.rest.personal.dto;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +19,11 @@ public class PersonalUpdateDTO {
 
     @Length(min = 20, max = 20, message = "La cuenta de banco debe de contener 20 caracteres, los dos primeros son ES y los demás dígitos")
     private String iban;
+
+    @Positive(message = "El sueldo debe de ser positivo")
+    private Double sueldo;
+
+    @Length(min = 9, max = 9, message = "El telefono debe de tener 9 caracteres")
+    private String telefono;
 
 }
