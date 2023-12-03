@@ -23,9 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
-/*
+/**
 * Implementación de la interfaz ClienteService que contiene los métodos de la lógica de negocio
 * Aplicacion de Cache
+* @version 1.0
+* @author Joe Brandon
  */
 
 @Service
@@ -45,10 +47,10 @@ public class ClienteServiceImpl implements ClienteService{
         this.clienteMapper = clienteMapper;
         this.storageService = storageService;
     }
-    /*
+    /**
     * Método que actuallizar un cliente en la base de datos
     * @param id Identificador del cliente de tipo UUID
-    * @param clienteCreateRequest Objeto con los datos del cliente
+    * @param clienteUpdateRequest Objeto con los datos del cliente
     * @return ClienteReponse Objeto con los datos del cliente actualizado
     * @throws ClienteFailSave Excepción que se lanza cuando no se ha podido actualizar el cliente
      */
@@ -65,7 +67,7 @@ public class ClienteServiceImpl implements ClienteService{
         // Devolver el objeto cliente actualizado
         return clienteMapper.toClienteReponse(clienteActualizado);
     }
-    /*
+    /**
     * Método que busca un cliente por su ID
     * @param id Identificador del cliente de tipo UUID
     * @return ClienteReponse Objeto con los datos del cliente
@@ -78,7 +80,7 @@ public class ClienteServiceImpl implements ClienteService{
         // Buscar el cliente existente por su ID en el caso contrario lanza una excepción
         return clienteMapper.toClienteReponse(clienteRepository.findById(id).orElseThrow(()->new ClienteNotFound(id.toString())));
     }
-    /*
+    /**
     * Método que busca todos los clientes y los agrupa de acuerdo a los criterios de búsqueda
     * @param pageable Objeto con los datos de la paginación
     * @Param nombre Nombre del cliente
@@ -118,7 +120,7 @@ public class ClienteServiceImpl implements ClienteService{
         // Se devuelven los clientes basados en los criterios de busqueda
         return clienteRepository.findAll(criterio, pageable).map(clienteMapper::toClienteReponse);
     }
-    /*
+    /**
     * Método que elimina un cliente por su ID
     * @param id Identificador del cliente de tipo UUID
     * @throws ClienteNotFound Excepción que se lanza cuando no se ha encontrado el cliente
@@ -136,7 +138,7 @@ public class ClienteServiceImpl implements ClienteService{
         // Elimina el cliente de la base de datos
         clienteRepository.delete(clienteAElminar);
     }
-    /*
+    /**
     * Método que guarda un cliente en la base de datos
     * @param clienteCreateRequest Objeto con los datos del cliente
     * @return ClienteReponse Objeto con los datos del cliente guardado
@@ -157,7 +159,7 @@ public class ClienteServiceImpl implements ClienteService{
             throw new ClienteFailSave("Ha habido un error al registrar al cliente");
         }
     }
-    /*
+    /**
     * Método que actualiza la imagen de un cliente
     * @param id Identificador del cliente de tipo UUID
     * @param image Imagen del cliente

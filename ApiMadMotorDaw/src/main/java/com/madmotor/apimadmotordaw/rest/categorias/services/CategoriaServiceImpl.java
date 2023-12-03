@@ -20,7 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-/*
+/**
  * Implementación de la interfaz CategoriaService que contiene los métodos de la lógica de negocio
  * Aplicacion de Cache
  */
@@ -37,7 +37,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         this.categoriaRepository = categoriaRepository;
         this.categoriaMapper = categoriaMapper;
     }
-    /*
+    /**
      * Método que devuelve todas las categorias con paginacion
      * @param nombre el nombre de la categoria
      * @param isDeleted si la categoria esta borrada o no
