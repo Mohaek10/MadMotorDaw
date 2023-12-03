@@ -44,6 +44,8 @@ class PersonalServiceImplTest {
             .fechaNacimiento("12/12/1999")
             .direccion("Calle de la piruleta")
             .iban("ES123456789123456")
+            .sueldo(1200.00)
+            .telefono("123456789")
             .build();
 
     private Personal personal2 = Personal.builder()
@@ -54,6 +56,8 @@ class PersonalServiceImplTest {
             .fechaNacimiento("12/02/2002")
             .direccion("Calle de la Rioja")
             .iban("ES123456789123455")
+            .sueldo(1200.00)
+            .telefono("123456789")
             .build();
 
     private final PersonalResponseDTO personalResponseDTO1 = PersonalResponseDTO.builder()
@@ -64,6 +68,8 @@ class PersonalServiceImplTest {
             .fechaNacimiento("12/12/1999")
             .direccion("Calle de la piruleta")
             .iban("ES123456789123456")
+            .sueldo(1200.00)
+            .telefono("123456789")
             .build();
 
     private final PersonalResponseDTO personalResponseDTO2 = PersonalResponseDTO.builder()
@@ -74,6 +80,8 @@ class PersonalServiceImplTest {
             .fechaNacimiento("12/02/2002")
             .direccion("Calle de la Rioja")
             .iban("ES123456789123455")
+            .sueldo(1200.00)
+            .telefono("123456789")
             .build();
 
 
@@ -134,7 +142,7 @@ class PersonalServiceImplTest {
         when(personalRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
         when(personalMapper.toPersonalResponseDto(personal1)).thenReturn(personalResponseDTO1);
         when(personalMapper.toPersonalResponseDto(personal2)).thenReturn(personalResponseDTO2);
-        Page<PersonalResponseDTO> actualPage = personalService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
+        Page<PersonalResponseDTO> actualPage = personalService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
         assertAll("findAll",
                 () -> assertNotNull(actualPage),
                 () -> assertFalse(actualPage.isEmpty()),
@@ -154,6 +162,8 @@ class PersonalServiceImplTest {
         Optional<String> fechaNacimiento = Optional.of("12/12/1999");
         Optional<String> direccion = Optional.of("Calle de la piruleta");
         Optional<String> iban =Optional.of("ES123456789123456");
+        Optional<Double> sueldo = Optional.of(1200.00);
+        Optional<String> telefono = Optional.of("123456789");
         List<Personal> expectedPersonal = Arrays.asList(personal1, personal2);
         List<PersonalResponseDTO> expectedResponsePersonal = Arrays.asList(personalResponseDTO1, personalResponseDTO2);
         Pageable pageable = PageRequest.of(0, 10, Sort.by("dni").ascending());
@@ -161,7 +171,7 @@ class PersonalServiceImplTest {
         when(personalRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
         when(personalMapper.toPersonalResponseDto(personal1)).thenReturn(personalResponseDTO1);
         when(personalMapper.toPersonalResponseDto(personal2)).thenReturn(personalResponseDTO2);
-        Page<PersonalResponseDTO> actualPage = personalService.findAll(dni, nombre, apellidos, fechaNacimiento, direccion, iban, pageable);
+        Page<PersonalResponseDTO> actualPage = personalService.findAll(dni, nombre, apellidos, fechaNacimiento, direccion, iban, sueldo, telefono, pageable);
         assertAll("findAll",
                 () -> assertNotNull(actualPage),
                 () -> assertFalse(actualPage.isEmpty()),

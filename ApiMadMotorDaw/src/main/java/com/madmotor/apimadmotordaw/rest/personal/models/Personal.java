@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -50,4 +51,14 @@ public class Personal {
     @NotBlank(message = "Debe tener una cuenta bancaria")
     @Length(min = 10, max = 30, message = "La cuenta bancaria debe de tener 20 caracteres")
     private String iban;
+
+    @Column(name = "sueldo", nullable = false)
+    @NotBlank(message = "Debe tener un sueldo")
+    @Positive(message = "El sueldo debe de ser positivo")
+    private Double sueldo;
+
+    @Column(name = "telefono", nullable = false)
+    @NotBlank(message = "Debe tener un teléfono")
+    @Length(min = 9, max = 9, message = "El teléfono debe de tener 9 caracteres")
+    private String telefono;
 }
