@@ -10,7 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Creamos el repositorio extendéndolo de JPARepository y pasándole el tipo de entidad y el tipo de la clave primaria
+ * Con ello ya tenemos las operaciones básicas de CRUD y Paginación gracias JPASpecificationExecutor
+ */
 public interface CategoriaRepository extends JpaRepository<Categoria, Long>, JpaSpecificationExecutor<Categoria> {
 
 
