@@ -35,15 +35,8 @@ public class SwaggerConfig {
 
                                 .contact(
                                         new Contact()
-                                                .name("Rubén Fernández Pérez")
-                                                .url("https://github.com/Rubenoide03")
-                                                .name("Miguel Vicario Rubio")
-                                                .url("https://github.com/miviru")
-                                                .name("Joe Brandon Carrillo Lozano")
-                                                .url("https://github.com/JBrandonCL")
                                                 .name("Mohamed El Kasmi El Kaderi ")
                                                 .url("https://github.com/Mohaek10")
-
                                 )
 
                 )
