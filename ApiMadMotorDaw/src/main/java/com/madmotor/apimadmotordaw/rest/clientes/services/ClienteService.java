@@ -18,5 +18,5 @@ public interface ClienteService {
     void deleteById(UUID id);
 
     ClienteReponse savePost(ClienteCreateRequest clienteCreateRequest);
-    ClienteReponse updateImage(UUID id, MultipartFile image);
+    ClienteReponse updateImage(UUID id, MultipartFile image, Boolean withUrl);
 }

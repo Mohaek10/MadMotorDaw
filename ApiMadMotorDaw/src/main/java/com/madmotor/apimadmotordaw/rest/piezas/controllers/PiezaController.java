@@ -3,7 +3,9 @@ package com.madmotor.apimadmotordaw.rest.piezas.controllers;
 import com.madmotor.apimadmotordaw.rest.piezas.dto.PiezaCreateDTO;
 import com.madmotor.apimadmotordaw.rest.piezas.dto.PiezaResponseDTO;
 import com.madmotor.apimadmotordaw.rest.piezas.dto.PiezaUpdateDTO;
+import com.madmotor.apimadmotordaw.rest.piezas.models.Pieza;
 import com.madmotor.apimadmotordaw.rest.piezas.services.PiezaService;
+import com.madmotor.apimadmotordaw.rest.vehiculos.models.Vehiculo;
 import com.madmotor.apimadmotordaw.utils.pagination.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -85,6 +86,25 @@ public class PiezaController {
         log.info("Borrando pieza por id: " + id);
         piezaService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    @PatchMapping(value = "/image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Pieza> patchVehiculoImage(
+            @PathVariable UUID id, @RequestPart("image") MultipartFile image) {
+
+        log.info("Actualizando imagen de vehiculo con id: " + id);
+        List<String> permittedContentTypes = List.of("image/png", "image/jpg", "image/jpeg", "image/gif");
+        try {
+            String contentType = image.getContentType();
+            log.info("Content type: " + contentType);
+            if (!image.isEmpty() && contentType != null && permittedContentTypes.contains(contentType.toLowerCase())){
+                return ResponseEntity.ok(piezaService.updateImage(id.toString(), image, true));
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }catch (Exception e){
+            log.error("Error al actualizar la imagen del vehiculo con id: " + id);
+            return ResponseEntity.badRequest().build();
+        }
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

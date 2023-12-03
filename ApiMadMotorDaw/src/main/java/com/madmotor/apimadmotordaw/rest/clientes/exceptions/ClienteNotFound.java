@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.UUID;
 
 /**
- * Excepción de producto no encontrado
+ * Excepción de Cliente no encontrado
  * Status 404
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
