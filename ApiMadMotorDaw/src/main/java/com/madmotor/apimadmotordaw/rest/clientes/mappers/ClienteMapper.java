@@ -7,6 +7,8 @@ import com.madmotor.apimadmotordaw.rest.clientes.dto.ClienteReponse;
 import com.madmotor.apimadmotordaw.rest.clientes.dto.ClienteUpdateRequest;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class ClienteMapper {
 
@@ -19,6 +21,9 @@ public class ClienteMapper {
                 .codigoPostal(clienteRequest.getCodigoPostal())
                 .dni(clienteRequest.getDni())
                 .imagen(clienteRequest.getImagen()!= null? clienteRequest.getImagen() : IMAGE_DEFAULT)
+                .isDeleted(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -31,6 +36,9 @@ public class ClienteMapper {
                 .direccion(clienteUpdateRequest.getDireccion()!= null && !clienteUpdateRequest.getDireccion().isEmpty()? clienteUpdateRequest.getDireccion(): cliente.getDireccion())
                 .codigoPostal(clienteUpdateRequest.getCodigoPostal()!= null? clienteUpdateRequest.getCodigoPostal(): cliente.getCodigoPostal())
                 .imagen(clienteUpdateRequest.getImagen()!= null? clienteUpdateRequest.getImagen(): cliente.getImagen())
+                .isDeleted(clienteUpdateRequest.getIsDeleted()!= null? clienteUpdateRequest.getIsDeleted(): cliente.getIsDeleted())
+                .createdAt(cliente.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
     public ClienteReponse toClienteReponse(Cliente cliente) {
@@ -42,6 +50,9 @@ public class ClienteMapper {
                 .codigoPostal(cliente.getCodigoPostal())
                 .dni(cliente.getDni())
                 .imagen(cliente.getImagen())
+                .isDeleted(cliente.getIsDeleted())
+                .createdAt(cliente.getCreatedAt())
+                .updatedAt(cliente.getUpdatedAt())
                 .build();
     }
 

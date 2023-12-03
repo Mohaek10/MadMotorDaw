@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+
 
 @Data
 @Builder
@@ -18,6 +18,8 @@ public class PersonalResponseDTO {
     private String apellidos;
     private String fechaNacimiento;
     private String direccion;
+    private Double sueldo;
+    private String telefono;
     private String iban;
 
 

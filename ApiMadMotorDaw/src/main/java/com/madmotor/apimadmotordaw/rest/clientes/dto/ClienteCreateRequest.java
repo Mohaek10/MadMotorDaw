@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+
 @Data
 @Builder
 @Schema(description = "Crea un nuevo cliente")
@@ -38,7 +39,6 @@ public class ClienteCreateRequest {
     @Pattern(regexp = "^[0-9]{8}[A-Za-z]?$", message = "El DNI debe contener 8 dígitos seguidos de una letra opcional")
    private final String dni;
 
-    @Schema(description = "Imagen del cliente")
-    @Builder.Default
-    private final String imagen = IMAGE_DEFAULT;
+
+    private final String imagen ;
 }

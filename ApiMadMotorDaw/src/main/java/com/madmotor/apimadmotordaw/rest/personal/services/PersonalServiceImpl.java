@@ -60,7 +60,7 @@ public class PersonalServiceImpl implements PersonalService {
 
 
     @Override
-    public Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable) {
+    public Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Optional<Double> sueldo, Optional<String> telefono, Pageable pageable) {
         Specification<Personal> specDni = (root, query, criteriaBuilder) ->
                 dni.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("dni")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
@@ -77,10 +77,27 @@ public class PersonalServiceImpl implements PersonalService {
                 iban.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("iban")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
+        Specification<Personal> specSueldo = (root, query, criteriaBuilder) ->
+                sueldo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("sueldo")), "%" + m.toString() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+        Specification<Personal> specFechaNacimiento = (root, query, criteriaBuilder) ->
+                fechaNacimiento.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("fechaNacimiento")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+        Specification<Personal> specDireccion = (root, query, criteriaBuilder) ->
+                direccion.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("direccion")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+        Specification<Personal> specTelefono = (root, query, criteriaBuilder) ->
+                telefono.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("telefono")), "%" + m.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
         Specification<Personal> criterio = Specification.where(specDni)
                 .and(specNombre)
                 .and(specApellidos)
-                .and(specIban);
+                .and(specIban)
+                .and(specFechaNacimiento)
+                .and(specDireccion)
+                .and(specSueldo)
+                .and(specTelefono);
 
 
         return personalRepository.findAll(criterio, pageable).map(personalMapper::toPersonalResponseDto);
@@ -96,7 +113,7 @@ public class PersonalServiceImpl implements PersonalService {
     @CacheEvict
     public void deleteById(Long id) {
         log.info("Borrando trabajador@ con id: " + id);
-        personalRepository.findById(id).orElseThrow(() -> new PersonalNotFound("Trabajador@ con id: " + id + " no encontrado"));
+        personalRepository.findById(id).orElseThrow(() -> new PersonalNotFound("Trabajador@ " + id + " no encontrado"));
         personalRepository.deleteById(id);
     }
 }

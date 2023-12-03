@@ -97,16 +97,16 @@ class PersonalRestControllerTest {
     void getAllPersonal() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
         Page<PersonalResponseDTO> page = new PageImpl<>(List.of(testResponseDTO, testResponseDTO2));
-        when(personalService.findAll(any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
+        when(personalService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
 
-        ResponseEntity<PageResponse<PersonalResponseDTO>> response = personalRestController.getAllPersonal(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10, "id", "asc");
+        ResponseEntity<PageResponse<PersonalResponseDTO>> response = personalRestController.getAllPersonal(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10, "id", "asc");
 
         assertAll(
                 () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                 () -> assertEquals(2, response.getBody().totalElements()),
                 () -> assertEquals(1, response.getBody().totalPages()),
                 () -> assertEquals(2, response.getBody().content().size()),
-                () -> verify(personalService, times(1)).findAll(any(), any(), any(), any(), any(), any(), any())
+                () -> verify(personalService, times(1)).findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())
         );
 
 

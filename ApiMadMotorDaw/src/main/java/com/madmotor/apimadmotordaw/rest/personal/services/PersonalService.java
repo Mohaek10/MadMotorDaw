@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface PersonalService {
-    Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Pageable pageable);
+    Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Optional<Double> sueldo, Optional<String> telefono, Pageable pageable);
     PersonalResponseDTO findById(Long id);
     PersonalResponseDTO save(PersonalCreateDTO personalCreateDto);
     PersonalResponseDTO update(Long id, PersonalUpdateDTO personalCreateDto);

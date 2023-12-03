@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("${api.version}/auth") // Es la ruta del controlador
+@RequestMapping("${api.version}/auth")
 public class AuthenticationRestController {
     private final AuthenticationService authenticationService;
 
@@ -28,36 +28,18 @@ public class AuthenticationRestController {
         this.authenticationService = authenticationService;
     }
 
-    /**
-     * Registra un usuario
-     *
-     * @param request datos del usuario
-     * @return Token de autenticación
-     */
     @PostMapping("/signup")
     public ResponseEntity<JwtAuthResponse> signUp(@Valid @RequestBody UserSignUpRequest request) {
         log.info("Registrando usuario: {}", request);
         return ResponseEntity.ok(authenticationService.signUp(request));
     }
 
-    /**
-     * Inicia sesión de un usuario
-     *
-     * @param request datos del usuario
-     * @return Token de autenticación
-     */
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthResponse> signIn(@Valid @RequestBody UserSignInRequest request) {
         log.info("Iniciando sesión de usuario: {}", request);
         return ResponseEntity.ok(authenticationService.signIn(request));
     }
 
-    /**
-     * Manejador de excepciones de Validación: 400 Bad Request
-     *
-     * @param ex excepción
-     * @return Mapa de errores de validación con el campo y el mensaje
-     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
