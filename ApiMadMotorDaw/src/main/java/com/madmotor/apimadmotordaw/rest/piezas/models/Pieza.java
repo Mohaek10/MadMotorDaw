@@ -38,6 +38,7 @@ public class Pieza {
     @Column
     @PositiveOrZero(message = "El stock debe ser mayor o igual que 0")
     private Integer stock;
+    @Builder.Default
     private String image=IMAGE_DEFAULT;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
