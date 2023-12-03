@@ -18,9 +18,9 @@ public interface PedidoRepository extends MongoRepository<Pedido, ObjectId> {
 
     Page<Pedido> findByIdUsuario(UUID idUsuario, Pageable pageable);
 
-    List<Pedido> findPedidosIdsByIdUsuario(Long idUsuario);
+    List<Pedido> findPedidosIdsByIdUsuario(UUID idUsuario);
 
-    boolean existsByIdUsuario(Long idUsuario);
+    boolean existsByIdUsuario(UUID idUsuario);
 
 
 
