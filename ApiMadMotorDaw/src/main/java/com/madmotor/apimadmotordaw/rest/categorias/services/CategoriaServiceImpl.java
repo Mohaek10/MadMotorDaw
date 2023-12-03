@@ -154,9 +154,10 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Se comprueba si la categoria tiene vehiculos asociados y si los tiene lanza una excepcion 409 conflict
         if (categoriaRepository.existeVehiculoByUd(id)) {
             log.warn("No se puede borrar la categoría con id: " + id + " porque tiene vehiculos asociados");
-            throw new CategoriaExists("No se puede borrar la categoría con id " + id + " porque tiene vehiculos asociados");
+            // se borra categoria de manera logica
+            categoriaRepository.updateIsDeletedToTrueById(id);
         } else {
-            // Se borra la categoria
+            // Se borra la categoria de manera fisica
             categoriaRepository.deleteById(id);
         }
     }

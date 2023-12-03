@@ -30,7 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("${api.version}/pedidos")
 @Slf4j
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')") //Este endpoint solo lo puede usar un usuario con rol ADMIN osea el dueño o trbajador, desde aqui un cliente no deberi de crear pedidos
 public class PedidosController {
     private final PedidoService pedidosService;
     private final PaginationLinksUtils paginationLinksUtils;

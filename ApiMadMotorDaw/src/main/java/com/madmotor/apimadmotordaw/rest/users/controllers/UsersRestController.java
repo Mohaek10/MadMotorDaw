@@ -117,7 +117,6 @@ public class UsersRestController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserInfoResponse> me(@AuthenticationPrincipal User user) {
         log.info("Obteniendo usuario");
-        // Esta autenticado, por lo que devolvemos sus datos ya sabemos su id
         return ResponseEntity.ok(usersService.findById(user.getId().toString()));
     }
 
@@ -173,13 +172,14 @@ public class UsersRestController {
             @Valid @RequestBody CreatePedidoDto pedido
     ) {
         log.info("Creando pedido: " + pedido);
+
         pedido.setIdUsuario(user.getId().toString());
+        log.info("Creando pedido: " + pedido);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidosService.save(pedido));
     }
 
-/**
     @PutMapping("/me/pedidos/{id}")
-    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ResponsePedidoDto> updatePedido(
             @AuthenticationPrincipal User user,
             @PathVariable("id") ObjectId idPedido,
@@ -191,7 +191,7 @@ public class UsersRestController {
 
 
     @DeleteMapping("/me/pedidos/{id}")
-    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deletePedido(
             @AuthenticationPrincipal User user,
             @PathVariable("id") ObjectId idPedido
@@ -202,12 +202,6 @@ public class UsersRestController {
     }
 
 
-    /**
-     * Manejador de excepciones de Validación: 400 Bad Request
-     *
-     * @param ex excepción
-     * @return Mapa de errores de validación con el campo y el mensaje
-     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
