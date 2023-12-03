@@ -60,27 +60,25 @@ public class UsersServiceImpl implements UsersService {
         // Si se ha introducido algún criterio de búsqueda se devuelven los clientes que coincidan con los criterios de búsqueda
         // Se devuelven los usuarios que coincidan con los criterios de búsqueda
         log.info("Buscando todos los usuarios con username: " + username + " y borrados: " + isDeleted);
+
         //Criterio de búsqueda por username
+
         Specification<User> specUsernameUser = (root, query, criteriaBuilder) ->
                 username.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("username")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        // Criterio de búsqueda por email
         Specification<User> specEmailUser = (root, query, criteriaBuilder) ->
                 email.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        // Criterio de búsqueda por borrado
         Specification<User> specIsDeleted = (root, query, criteriaBuilder) ->
                 isDeleted.map(m -> criteriaBuilder.equal(root.get("isDeleted"), m))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
-        // Combinamos las especificaciones
         Specification<User> criterio = Specification.where(specUsernameUser)
                 .and(specEmailUser)
                 .and(specIsDeleted);
 
-        // Debe devolver un Page, por eso usamos el findAll de JPA
         return usersRepository.findAll(criterio, pageable).map(usersMapper::toUserResponse);
     }
 
@@ -94,9 +92,7 @@ public class UsersServiceImpl implements UsersService {
     @Cacheable(key = "#id")
     public UserInfoResponse findById(String id) {
         log.info("Buscando usuario por id: " + id);
-        // Buscamos el usuario
         var user = usersRepository.findById(UUID.fromString(id)).orElseThrow(() -> new UserNotFound(id.toString()));
-        // Buscamos sus pedidos
         var pedidos = pedidosRepository.findPedidosIdsByIdUsuario(UUID.fromString(id)).stream().map(p -> p.getId().toHexString()).toList();
         return usersMapper.toUserInfoResponse(user, pedidos);
     }
@@ -110,7 +106,6 @@ public class UsersServiceImpl implements UsersService {
     @CachePut(key = "#result.id")
     public UserResponse save(UserRequest userRequest) {
         log.info("Guardando usuario: " + userRequest);
-        // No debe existir otro con el mismo username o email
         usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(userRequest.getUsername(), userRequest.getEmail())
                 .ifPresent(u -> {
                     throw new UserNameOrEmailExists("Ya existe un usuario con ese username o email");
@@ -130,7 +125,6 @@ public class UsersServiceImpl implements UsersService {
     public UserResponse update(String id, UserRequest userRequest) {
         log.info("Actualizando usuario: " + userRequest);
         usersRepository.findById(UUID.fromString(id)).orElseThrow(() -> new UserNotFound(id));
-        // No debe existir otro con el mismo username o email, y si existe soy yo mismo
         usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(userRequest.getUsername(), userRequest.getEmail())
                 .ifPresent(u -> {
                     if (!u.getId().equals(id)) {
@@ -152,13 +146,10 @@ public class UsersServiceImpl implements UsersService {
     public void deleteById(String id) {
         log.info("Borrando usuario por id: " + id);
         User user = usersRepository.findById(UUID.fromString(id)).orElseThrow(() -> new UserNotFound(id.toString()));
-        //Hacemos el borrado fisico si no hay pedidos
         if (pedidosRepository.existsByIdUsuario(UUID.fromString(id))) {
-            // Si no, lo marcamos como borrado lógico
             log.info("Borrado lógico de usuario por id: " + id);
             usersRepository.updateIsDeletedToTrueById(UUID.fromString(id));
         } else {
-            // Si hay pedidos, lo borramos físicamente
             log.info("Borrado físico de usuario por id: " + id);
             usersRepository.delete(user);
         }

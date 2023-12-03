@@ -33,3 +33,17 @@ VALUES
     (UUID(), 'María', 'Gómez', 'Avenida Central', 54321, '98765432B',  'https://via.placeholder.com/150'),
     (UUID(), 'Pedro', 'Martínez', 'Calle Nueva', 67890, '45678901C',  'https://via.placeholder.com/150'),
     (UUID(), 'Laura', 'López', 'Paseo Grande', 13579, '01234567D',  'https://via.placeholder.com/150');
+
+-- Contraseña: madmotor
+INSERT INTO USUARIOS(id, nombre, apellidos, username, email, password)
+VALUES
+    ('e30659a7-6510-4c2f-a237-308a089c1ffd', 'Admin', 'admin surname', 'admin', 'admin@admin.es',
+    '$2a$10$JbN8jzAUoOqfjYHrkB1gIusKBD3mH5EGoHGtOe8bDirzBcjsp6eaC');
+
+INSERT INTO USER_ROLES (user_id, roles)
+VALUES
+    ('e30659a7-6510-4c2f-a237-308a089c1ffd', 'USER');
+
+INSERT INTO USER_ROLES (user_id, roles)
+VALUES
+    ('e30659a7-6510-4c2f-a237-308a089c1ffd', 'ADMIN');

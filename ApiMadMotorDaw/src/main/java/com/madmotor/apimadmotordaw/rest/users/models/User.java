@@ -28,8 +28,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Entity
 @Table(name = "USUARIOS")
+
 @EntityListeners(AuditingEntityListener.class)
 @Schema(description = "Usuario de la aplicación")
+
 public class User implements UserDetails {
     @Schema(description = "Identificador del usuario", example = "123e4567-e89b-12d3-a456-426614174000")
     @Id

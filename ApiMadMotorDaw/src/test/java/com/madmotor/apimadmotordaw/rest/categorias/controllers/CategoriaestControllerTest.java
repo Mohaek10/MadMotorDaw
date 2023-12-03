@@ -19,6 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -33,6 +35,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 @ExtendWith(MockitoExtension.class)
+@WithMockUser(username = "admin", password = "admin", roles = {"ADMIN", "USER"})
+
 class CategoriaestControllerTest {
     private final String myEndpoint = "/v1/categorias";
 
@@ -52,6 +56,17 @@ class CategoriaestControllerTest {
     public CategoriaestControllerTest(CategoriaService categoriaService){
         this.categoriasService = categoriaService;
         mapper.registerModule(new JavaTimeModule());
+    }
+    @Test
+    @WithAnonymousUser
+    void NotAuthenticated() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(
+                        get(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        assertEquals(403, response.getStatus());
     }
 
 
