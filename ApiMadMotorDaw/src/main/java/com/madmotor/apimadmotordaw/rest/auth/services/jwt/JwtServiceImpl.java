@@ -20,9 +20,10 @@ import java.util.function.Function;
 @Service
 @Slf4j
 public class JwtServiceImpl implements JwtService {
+    // Inyectamos las propiedades del fichero application.properties
     @Value("${jwt.secret}")
     private String jwtSigningKey;
-
+    // Tiempo de expiración del token
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
 

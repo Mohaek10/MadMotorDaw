@@ -10,7 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+/**
+ * Reposito de la entidad User
+ *  - JpaRepository: Proporciona el CRUD
+ *  - JpaSpecificationExecutor: Proporciona el filtrado
+ */
 @Repository
 public interface UsersRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 

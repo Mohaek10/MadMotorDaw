@@ -16,6 +16,9 @@ import com.madmotor.apimadmotordaw.rest.users.models.User;
 import com.madmotor.apimadmotordaw.rest.users.services.UsersService;
 import com.madmotor.apimadmotordaw.utils.pagination.PageResponse;
 import com.madmotor.apimadmotordaw.utils.pagination.PaginationLinksUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -39,16 +42,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
+/**
+ * Controlador de usuarios
+ * Es necesario que tengan un ROL para acceder a los métodos
+ */
 @RestController
 @Slf4j
 @RequestMapping("${api.version}/users") // Es la ruta del controlador
 @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
 public class UsersRestController {
+    //Indicamamos las dependencias que vamos a usar
     private final UsersService usersService;
     private final PedidoService pedidosService;
     private final PaginationLinksUtils paginationLinksUtils;
-
+    // Inyectamos las dependencias
     @Autowired
     public UsersRestController(UsersService usersService, PedidoService pedidosService, PaginationLinksUtils paginationLinksUtils) {
         this.usersService = usersService;
@@ -67,8 +74,25 @@ public class UsersRestController {
      * @param sortBy    campo de ordenación
      * @param direction dirección de ordenación
      * @param request   petición
-     * @return Respuesta con la página de usuarios
+     * @return Respuesta con la página de usuarios con un Ok 200
+     * throws Unauthorized si no está autenticado (401)
+     * throws Forbidden si no tiene permisos (403)
      */
+    @Operation(summary = "Obtiene todos los usuarios")
+    @Parameters(value ={
+                    @io.swagger.v3.oas.annotations.Parameter(name = "username", description = "username del usuario"),
+                    @io.swagger.v3.oas.annotations.Parameter(name = "email", description = "email del usuario"),
+                    @io.swagger.v3.oas.annotations.Parameter(name = "isDeleted", description = "si está borrado o no"),
+                    @io.swagger.v3.oas.annotations.Parameter(name = "page", description = "página"),
+                    @io.swagger.v3.oas.annotations.Parameter(name = "size", description = "tamaño"),
+                    @io.swagger.v3.oas.annotations.Parameter(name = "sortBy", description = "campo de ordenación"),
+                    @io.swagger.v3.oas.annotations.Parameter(name = "direction", description = "dirección de ordenación")
+            })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden")
+    })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')") // Solo los admin pueden acceder
     public ResponseEntity<PageResponse<UserResponse>> findAll(
@@ -99,14 +123,47 @@ public class UsersRestController {
      * @param id del usuario, se pasa como parámetro de la URL /{id}
      * @return Usuario si existe
      * @throws UserNotFound si no existe el usuario (404)
+     * throws Unauthorized si no está autenticado (401)
+     * throws Forbidden si no tiene permisos (403)
      */
+    @Operation(summary = "Obtiene un usuario por su id")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "id del usuario")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Not Found")
+    })
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Solo los admin pueden acceder
     public ResponseEntity<UserInfoResponse> findById(@PathVariable String id) {
         log.info("findById: id: {}", id);
         return ResponseEntity.ok(usersService.findById(id));
     }
-
+    /**
+     * Crea un usuario
+     *
+     * @param userRequest usuario a crear
+     * @return Usuario creado 201
+     * @throws HttpClientErrorException.BadRequest si hay algún error de validación (400)
+     * throws Unauthorized si no está autenticado (401)
+     * throws BadRequest si hay error en los datos (400)
+     * throws Forbidden si no tiene permisos (403)
+     * throws UserNameOrEmailExists si ya existe un usuario con ese username o email (404)
+     */
+    @Operation(summary = "Crea un usuario")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "userRequest", description = "usuario a crear")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Creado "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Hay algo incorrecto en los datos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden prohiido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Ya hay un usuario con ese username o email")
+    })
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')") // Solo los admin pueden acceder
@@ -114,7 +171,31 @@ public class UsersRestController {
         log.info("save: userRequest: {}", userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(usersService.save(userRequest));
     }
-
+    /**
+     * Actualiza un usuario
+     *
+     * @param id          id del usuario
+     * @param userRequest usuario a actualizar
+     * @return Usuario actualizado
+     * @throws HttpClientErrorException.BadRequest si hay algún error de validación (400)
+     * throws Unauthorized si no está autenticado (401)
+     * throws BadRequest si hay error en los datos (400)
+     * throws Forbidden si no tiene permisos (403)
+     * throws UserNotFound si no existe el usuario (404)
+     * throws UserNameOrEmailExists si ya existe un usuario con ese username o email (404)
+     */
+    @Operation(summary = "Actualiza un usuario")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "id del usuario"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "userRequest", description = "usuario a actualizar")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Hay algo incorrecto en los datos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Ya hay un usuario con ese username o email")
+    })
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Solo los admin pueden acceder
@@ -129,7 +210,20 @@ public class UsersRestController {
      * @param id id del usuario
      * @return Respuesta vacía
      * @throws UserNotFound si no existe el usuario (404)
+     * throws Unauthorized si no está autenticado (401)
+     * throws Forbidden si no tiene permisos (403)
+     * throws BadRequest si hay error en los datos (400)
      */
+    @Operation(summary = "Borra un usuario")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "id del usuario")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "No Content"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "No se ha podido encontrar el usuario")
+    })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Solo los admin pueden acceder
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
@@ -143,7 +237,20 @@ public class UsersRestController {
      *
      * @param user usuario autenticado
      * @return Datos del usuario
+     * @throws UserNotFound si no existe el usuario (404)
+     * throws Unauthorized si no está autenticado (401)
+     * throws Forbidden si no tiene permisos (403)
      */
+    @Operation(summary = "Obtiene el usuario actual")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "user", description = "usuario autenticado")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "No se ha podido encontrar el usuario")
+    })
     @GetMapping("/me/profile")
     @PreAuthorize("hasRole('ADMIN')") // Solo los admin pueden acceder
     public ResponseEntity<UserInfoResponse> me(@AuthenticationPrincipal User user) {
@@ -158,8 +265,24 @@ public class UsersRestController {
      * @param user        usuario autenticado
      * @param userRequest usuario a actualizar
      * @return Usuario actualizado
-     * @throws HttpClientErrorException.BadRequest si hay algún error de validación (400)
+     * @throws UserNotFound si no existe el usuario (404)
+     * throws Unauthorized si no está autenticado (401)
+     *  throws Forbidden si no tiene permisos (403)
+     *  throws UserNameOrEmailExists si ya existe un usuario con ese username o email (404)
+     *  throws BadRequest si hay error en los datos (400)
      */
+    @Operation(summary = "Actualiza el usuario actual")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "user", description = "usuario autenticado"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "userRequest", description = "usuario a actualizar")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Hay algo incorrecto en los datos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Ya hay un usuario con ese username o email")
+    })
     @PutMapping("/me/profile")
     @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<UserResponse> updateMe(@AuthenticationPrincipal User user, @Valid @RequestBody UserRequest userRequest) {
@@ -172,7 +295,20 @@ public class UsersRestController {
      *
      * @param user usuario autenticado
      * @return Respuesta vacía
+     * @throws UserNotFound si no existe el usuario (404)
+     * throws Unauthorized si no está autenticado (401)
+     * throws Forbidden si no tiene permisos (403)
      */
+    @Operation(summary = "Borra el usuario actual")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "user", description = "usuario autenticado")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "No Content  borrado con exito"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "No se ha podido encontrar el usuario")
+    })
     @DeleteMapping("/me/profile")
     @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<Void> deleteMe(@AuthenticationPrincipal User user) {
@@ -191,6 +327,20 @@ public class UsersRestController {
      * @param direction dirección de ordenación
      * @return Respuesta con la página de pedidos
      */
+    @Operation(summary = "Obtiene los pedidos del usuario actual")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "user", description = "usuario autenticado"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "page", description = "página"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "size", description = "tamaño"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "sortBy", description = "campo de ordenación"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "direction", description = "dirección de ordenación")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "No se ha podido encontrar el usuario")
+    })
     @GetMapping("/me/pedidos")
     @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<PageResponse<ResponsePedidoDto>> getPedidosByUsuario(
@@ -213,7 +363,21 @@ public class UsersRestController {
      * @param idPedido id del pedido
      * @return Pedido
      * @throws UserNotFound si no existe el pedido
+     * throws Unauthorized si no está autenticado (401)
+     * throws Forbidden si no tiene permisos (403)
+     * throws PedidoNotFound si no existe el pedido (404)
      */
+    @Operation(summary = "Obtiene un pedido del usuario actual")
+    @Parameters(value ={
+            @io.swagger.v3.oas.annotations.Parameter(name = "user", description = "usuario autenticado"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "idPedido", description = "id del pedido")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No tiene autorización"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden no tienes permisos"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "No se ha podido encontrar el pedido")
+    })
     @GetMapping("/me/pedidos/{id}")
     @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<ResponsePedidoDto> getPedido(

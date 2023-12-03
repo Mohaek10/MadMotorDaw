@@ -5,6 +5,10 @@ import com.madmotor.apimadmotordaw.rest.auth.dto.JwtAuthResponse;
 import com.madmotor.apimadmotordaw.rest.auth.dto.UserSignInRequest;
 import com.madmotor.apimadmotordaw.rest.auth.dto.UserSignUpRequest;
 import com.madmotor.apimadmotordaw.rest.auth.services.authentication.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +37,17 @@ public class AuthenticationRestController {
      *
      * @param request datos del usuario
      * @return Token de autenticación
+     * throws UserAuthNameOrEmailExisten si el nombre de usuario o el email ya existen
+     * throws UserDiferentePasswords si las contraseñas no coinciden
      */
+    @Operation(summary = "Registra un usuario")
+    @Parameters(value = {
+            @io.swagger.v3.oas.annotations.Parameter(name = "request",description = "Datos para registro", required = true)
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Clientes encontrados"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Error de validación")
+    })
     @PostMapping("/signup")
     public ResponseEntity<JwtAuthResponse> signUp(@Valid @RequestBody UserSignUpRequest request) {
         log.info("Registrando usuario: {}", request);
@@ -45,7 +59,16 @@ public class AuthenticationRestController {
      *
      * @param request datos del usuario
      * @return Token de autenticación
+     * throws AuthSingInInvalid si el usuario o la contraseña son incorrectos
      */
+    @Operation(summary = "Inicia sesión de un usuario")
+    @Parameters(value = {
+            @Parameter(name = "request",description = "Datos para inicio de sesión", required = true)
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Clientes encontrados"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Error de validación")
+    })
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthResponse> signIn(@Valid @RequestBody UserSignInRequest request) {
         log.info("Iniciando sesión de usuario: {}", request);

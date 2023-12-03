@@ -28,17 +28,21 @@ import java.util.stream.Stream;
 @Service
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
+    // Indicamos que las dependencias que necesitamos para el framework
     private final AuthUsersRepository authUsersRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
+    // Inyectamos las dependencias
     @Autowired
     public AuthenticationServiceImpl(AuthUsersRepository authUsersRepository, PasswordEncoder passwordEncoder,
                                      JwtService jwtService, AuthenticationManager authenticationManager) {
         this.authUsersRepository = authUsersRepository;
+        // Codificador de contraseñas
         this.passwordEncoder = passwordEncoder;
+        // Servicio de JWT
         this.jwtService = jwtService;
+        // Gestor de autenticación
         this.authenticationManager = authenticationManager;
     }
 
@@ -47,6 +51,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      *
      * @param request datos del usuario
      * @return Token de autenticación
+     * throws UserAuthNameOrEmailExisten si el nombre de usuario o el email ya existen 404
+     * throws UserDiferentePasswords si las contraseñas no coinciden 400
      */
     @Override
     public JwtAuthResponse signUp(UserSignUpRequest request) {
@@ -78,6 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      *
      * @param request datos del usuario
      * @return Token de autenticación
+     * throws AuthSingInInvalid si el usuario o la contraseña son incorrectos 404
      */
     @Override
     public JwtAuthResponse signIn(UserSignInRequest request) {
