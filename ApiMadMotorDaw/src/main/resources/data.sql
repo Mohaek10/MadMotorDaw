@@ -21,10 +21,10 @@ VALUES
 
 INSERT INTO VEHICULOS(id,marca, modelo,v_year,km,precio,stock,imagen,descripcion,categoria_id)
 VALUES
-    (UUID(),'AUDI','A7',2010,100000,50000,10,'https://via.placeholder.com/150','Descripcion1',1),
-    (UUID(),'BMW','IX',2015,50000,60000,5,'https://via.placeholder.com/150','Descripcion2',2),
-    (UUID(),'MERCEDES','BENZ',2018,20000,200000,8,'https://via.placeholder.com/150','Descripcion3',3),
-    (UUID(),'SEAT','LEON',2019,10000,30000,10,'https://via.placeholder.com/150','Descripcion4',1);
+    ('01fdcf7f-fd16-4748-81dc-5d51d9799811','AUDI','A7',2010,100000,50000,10,'https://via.placeholder.com/150','Descripcion1',1),
+    ('e30659a7-6510-4c2f-a237-308a089c1ffd','BMW','IX',2015,50000,60000,5,'https://via.placeholder.com/150','Descripcion2',2),
+    ('15aaf887-906f-40c6-bb84-daa9c21e27ca','MERCEDES','BENZ',2018,20000,200000,8,'https://via.placeholder.com/150','Descripcion3',3),
+    ('5ef5739f-d092-46a4-993d-2e6e5190c2e2','SEAT','LEON',2019,10000,30000,10,'https://via.placeholder.com/150','Descripcion4',1);
 
 
 INSERT INTO CLIENTES (id, nombre, apellido, direccion, codigo_Postal, dni,  imagen)

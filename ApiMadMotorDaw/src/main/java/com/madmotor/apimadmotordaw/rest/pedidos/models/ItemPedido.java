@@ -17,9 +17,11 @@ import java.util.UUID;
 public class ItemPedido {
 
     @Min(value = 0, message = "La cantidad de vehiculos no puede ser negativa ni 0")
+    @Builder.Default
     private Integer cantidadVehiculos = 0;
 
     @Min(value = 0, message = "La cantidad de piezas no puede ser negativa")
+    @Builder.Default
     private Integer cantidadPiezas = 0;
 
     private UUID idVehiculo;

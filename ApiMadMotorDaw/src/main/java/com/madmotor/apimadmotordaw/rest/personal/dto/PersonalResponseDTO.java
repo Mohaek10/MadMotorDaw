@@ -18,9 +18,9 @@ public class PersonalResponseDTO {
     private String apellidos;
     private String fechaNacimiento;
     private String direccion;
-    private String iban;
     private Double sueldo;
     private String telefono;
+    private String iban;
 
 
 }

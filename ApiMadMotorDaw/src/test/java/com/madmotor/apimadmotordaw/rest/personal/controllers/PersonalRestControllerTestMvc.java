@@ -47,6 +47,8 @@ class PersonalRestControllerTestMvc {
             .fechaNacimiento("11-09-2002")
             .direccion("Av. de la Constitución 1")
             .iban("ES123456489123456789")
+            .sueldo(1200.0)
+            .telefono("123456789")
             .build();
 
     private final Personal personal2 = new Personal().builder()
@@ -57,6 +59,8 @@ class PersonalRestControllerTestMvc {
             .fechaNacimiento("11-09-2002")
             .direccion("Av. de la Constitución 1")
             .iban("ES123456787123456789")
+            .sueldo(1200.0)
+            .telefono("123456789")
             .build();
 
     private final PersonalResponseDTO testResponseDTO1 = PersonalResponseDTO.builder()
@@ -67,6 +71,8 @@ class PersonalRestControllerTestMvc {
             .fechaNacimiento("01-01-2002")
             .direccion("Camino de la Fuente 1")
             .iban("ES123456789123456789")
+            .sueldo(1200.0)
+            .telefono("123456789")
             .build();
 
     private final PersonalResponseDTO testResponseDTO2 = PersonalResponseDTO.builder()
@@ -77,6 +83,8 @@ class PersonalRestControllerTestMvc {
             .fechaNacimiento("19-11-2006")
             .direccion("Callenueva 1")
             .iban("ES754145653945")
+            .sueldo(1200.0)
+            .telefono("123456789")
             .build();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -112,6 +120,8 @@ class PersonalRestControllerTestMvc {
                 .fechaNacimiento("21-01-2002")
                 .direccion("Calle tercera 1")
                 .iban("ES123456729123456789")
+                .sueldo(1200.0)
+                .telefono("123456789")
                 .build();
         when(personalService.save(any(PersonalCreateDTO.class))).thenReturn(personalDto);
         MockHttpServletResponse response = mockMvc.perform(post(myEndpoint)

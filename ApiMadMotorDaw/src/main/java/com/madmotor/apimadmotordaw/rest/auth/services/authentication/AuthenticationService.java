@@ -1,0 +1,12 @@
+package com.madmotor.apimadmotordaw.rest.auth.services.authentication;
+
+
+import com.madmotor.apimadmotordaw.rest.auth.dto.JwtAuthResponse;
+import com.madmotor.apimadmotordaw.rest.auth.dto.UserSignInRequest;
+import com.madmotor.apimadmotordaw.rest.auth.dto.UserSignUpRequest;
+
+public interface AuthenticationService {
+    JwtAuthResponse signUp(UserSignUpRequest request);
+
+    JwtAuthResponse signIn(UserSignInRequest request);
+}

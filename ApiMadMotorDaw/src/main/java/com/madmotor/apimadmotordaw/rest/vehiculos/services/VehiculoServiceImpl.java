@@ -112,7 +112,7 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Vehiculo findById(String id) {
         log.info("Buscando por UUID " + id);
         var myID = UUID.fromString(id);
@@ -120,7 +120,7 @@ public class VehiculoServiceImpl implements VehiculoService {
 
     }
 
-    @CachePut
+    @CachePut(key = "#result.id")
     @Override
     public Vehiculo save(VehiculoCreateDto vehiculoCreateDto) {
         log.info("Guardando vehiculo " + vehiculoCreateDto);
@@ -133,6 +133,8 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
+    @CachePut(key ="#result.id")
+    @Transactional
     public Vehiculo update(String id, VehiculoUpdateDto vehiculoUpdateDto) {
         log.info("Actualizando vehiculo " + vehiculoUpdateDto);
 
@@ -141,6 +143,9 @@ public class VehiculoServiceImpl implements VehiculoService {
         var categoriaActual = vehiculoActual.getCategoria();
 
         // Intentar obtener la categoría actualizada
+        if (vehiculoUpdateDto.getCategoria() == null||vehiculoUpdateDto.getCategoria().equals("")) {
+            vehiculoUpdateDto.setCategoria(categoriaActual.getName());
+        }
         var categoriaNueva = categoriaService.findByName(vehiculoUpdateDto.getCategoria());
 
         // Si la categoría actualizada no existe, usar la categoría actual del vehículo
@@ -158,6 +163,8 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
+    @CachePut(key = "#id")
+    @Transactional
     public void deleteById(String id) {
 
         // Utilizamos el findById directamente del repositorio
@@ -180,6 +187,7 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
+    @CachePut(key = "#result.id")
     @Transactional
     public Vehiculo updateImage(String id, MultipartFile image, Boolean withUrl) {
         log.info("Actualizando imagen del vehiculo con id: " + id);
