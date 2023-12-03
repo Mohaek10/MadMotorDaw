@@ -6,6 +6,10 @@ import com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound;
 import com.madmotor.apimadmotordaw.rest.piezas.mappers.PiezaMapper;
 import com.madmotor.apimadmotordaw.rest.piezas.models.Pieza;
 import com.madmotor.apimadmotordaw.rest.piezas.repositories.PiezaRepository;
+import com.madmotor.apimadmotordaw.rest.storage.service.StorageService;
+import com.madmotor.apimadmotordaw.rest.vehiculos.exceptions.VehiculoNotFound;
+import com.madmotor.apimadmotordaw.rest.vehiculos.models.Vehiculo;
+import com.madmotor.apimadmotordaw.websockets.notificaciones.models.Notificacion;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -17,7 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 @Service
@@ -26,11 +32,14 @@ import java.util.UUID;
 public class PiezaServiceImpl implements PiezaService {
     private final PiezaRepository piezaRepository;
     private final PiezaMapper piezaMapper;
+    private final StorageService storageService;
+
 
     @Autowired
-    public PiezaServiceImpl(PiezaRepository piezaRepository, PiezaMapper piezaMapper) {
+    public PiezaServiceImpl(PiezaRepository piezaRepository, PiezaMapper piezaMapper, StorageService storageService) {
         this.piezaRepository = piezaRepository;
         this.piezaMapper = piezaMapper;
+        this.storageService = storageService;
     }
 
 
@@ -86,6 +95,30 @@ public class PiezaServiceImpl implements PiezaService {
         var piezaUpdated = piezaRepository.save(piezaMapper.toPieza(pieza, piezaToUpdate));
         return piezaMapper.toPiezaResponse(piezaUpdated);
 
+    }
+    public Pieza updateImage(String id, MultipartFile image, Boolean withUrl) {
+        log.info("Actualizando imagen del vehiculo con id: " + id);
+        var piezaActual = piezaRepository.findById(UUID.fromString(id)).orElseThrow(() -> new VehiculoNotFound(id));
+        if (piezaActual.getImage() != null && !piezaActual.getImage().equals(Vehiculo.IMAGE_DEFAULT)) {
+            storageService.delete(piezaActual.getImage());
+        }
+        var imagen = storageService.store(image);
+
+        String imageUrl = !withUrl ? imagen : storageService.getUrl(imagen);
+
+        var piezaActualizada = Pieza.builder()
+                .id(piezaActual.getId())
+                .name(piezaActual.getName())
+                .description(piezaActual.getDescription())
+                .price(piezaActual.getPrice())
+                .stock(piezaActual.getStock())
+                .image(imageUrl)
+                .createdAt(piezaActual.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        var piezaGuardada = piezaRepository.save(piezaActualizada);
+        return piezaGuardada;
     }
 
     @Override
