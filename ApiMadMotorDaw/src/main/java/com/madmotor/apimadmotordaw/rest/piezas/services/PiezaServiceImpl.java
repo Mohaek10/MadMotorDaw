@@ -157,7 +157,7 @@ public class PiezaServiceImpl implements PiezaService {
     public Pieza updateImage(String id, MultipartFile image, Boolean withUrl) {
         log.info("Actualizando imagen del vehiculo con id: " + id);
         var piezaActual = piezaRepository.findById(UUID.fromString(id)).orElseThrow(() -> new PiezaNotFound(UUID.fromString(id)));
-        if (piezaActual.getImage() != null && !piezaActual.getImage().equals(Vehiculo.IMAGE_DEFAULT)) {
+        if (piezaActual.getImage() != null && !piezaActual.getImage().equals(Pieza.IMAGE_DEFAULT)) {
             storageService.delete(piezaActual.getImage());
         }
         var imagen = storageService.store(image);
