@@ -21,6 +21,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controlador de la authentication del tipo RestController
+ *
+ * Con esta clase fijamos la ruta de acceso a este controlador con la anotación @RequestMapping
+ *
+ * @Autowired es una anotación que nos permite inyectar dependencias en las anotaciones @Controller, @Service, @Component, ...
+ * que se encuentren en nuestro contenedor Spring.
+ *
+ * @version 1.0
+ * @author
+ */
+
 @RestController
 @Slf4j
 @RequestMapping("${api.version}/auth")

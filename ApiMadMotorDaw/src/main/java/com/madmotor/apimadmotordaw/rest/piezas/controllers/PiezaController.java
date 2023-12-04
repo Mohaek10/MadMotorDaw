@@ -7,6 +7,9 @@ import com.madmotor.apimadmotordaw.rest.piezas.models.Pieza;
 import com.madmotor.apimadmotordaw.rest.piezas.services.PiezaService;
 import com.madmotor.apimadmotordaw.rest.vehiculos.models.Vehiculo;
 import com.madmotor.apimadmotordaw.utils.pagination.PageResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,6 +64,26 @@ public class PiezaController {
      * @param order orden ascendente o descendente
      * @return todos los parámetros de las piezas encontradas
      */
+
+    @Operation(summary = "Obtiene todas las piezas")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "name", description = "Nombre de la pieza", example = "Rueda"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "description", description = "Descripción de la pieza", example = "Rueda de 17 pulgadas"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "price", description = "Precio de la pieza", example = "100.0"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "stock", description = "Stock de la pieza", example = "10"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "page", description = "Número de página", example = "1"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "size", description = "Tamaño de la página", example = "10"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "sortBy", description = "Campo por el que se ordena", example = "id"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "order", description = "Orden ascendente o descendente", example = "asc")
+    })
+
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Piezas encontradas"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+    })
+
+
     @GetMapping()
     public ResponseEntity<PageResponse<PiezaResponseDTO>> getAllPiezas(
             @RequestParam (required = false) Optional<String> name,
@@ -87,6 +110,17 @@ public class PiezaController {
      * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si no se encuentra la pieza con el id (404)
      */
 
+    @Operation(summary = "Obtiene todas las piezas por su id")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "Id de la pieza", example = "1")
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Piezas encontradas"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "No encontrado")
+    })
+
     @GetMapping("/{id}")
     public ResponseEntity<PiezaResponseDTO> getPiezaById(@PathVariable @Valid UUID id) {
         log.info("Buscando pieza por id: " + id);
@@ -100,6 +134,18 @@ public class PiezaController {
      * @return los parámetros de la pieza creada
      * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido crear (404)
      */
+
+    @Operation(summary = "Crea una nueva pieza")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "piezaCreateDTO", description = "Pieza a crear basado en el DTO", example = "Rueda"),
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Pieza creada"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Pieza no creada")
+    })
+
     @PostMapping()
 
     public ResponseEntity<PiezaResponseDTO> createPieza(@Valid @RequestBody PiezaCreateDTO piezaCreateDTO) {
@@ -115,6 +161,19 @@ public class PiezaController {
      * @return los parámetros de la pieza actualizada
      * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido actualizar (404)
      */
+
+    @Operation(summary = "Actualiza una pieza")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "Id de la pieza", example = "1"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "piezaUpdateDTO", description = "Pieza a actualizar basado en el DTO", example = "Rueda"),
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pieza actualizada"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Pieza no actualizada")
+    })
+
     @PutMapping("/{id}")
 
     public ResponseEntity<PiezaResponseDTO> updatePieza(@PathVariable UUID id, @Valid @RequestBody PiezaUpdateDTO piezaUpdateDTO) {
@@ -131,6 +190,18 @@ public class PiezaController {
      * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido actualizar (404)
      */
 
+    @Operation(summary = "Actualiza parcialmente una pieza")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "Id de la pieza", example = "1"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "piezaUpdateDTO", description = "Pieza a actualizar basado en el DTO", example = "Rueda"),
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pieza actualizada parcialmente"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Pieza no actualizada parcialmente")
+    })
+
     @PatchMapping("/{id}")
     public ResponseEntity<PiezaResponseDTO> updatePartialPieza(@PathVariable UUID id, @Valid @RequestBody PiezaUpdateDTO piezaUpdateDTO) {
         log.info("Actualizando parcialmente pieza por id: " + id + " con pieza: " +piezaUpdateDTO );
@@ -144,6 +215,17 @@ public class PiezaController {
      * @return 204 si la pieza se ha borrado correctamente
      * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido borrar (404)
      */
+
+    @Operation(summary = "Borra una pieza")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "Id de la pieza", example = "1"),
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Pieza borrada"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Pieza no borrada")
+    })
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePieza(@PathVariable @Valid UUID id) {
@@ -160,6 +242,20 @@ public class PiezaController {
      * @return los parámetros de la pieza actualizada
      * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido actualizar (404)
      */
+
+    @Operation(summary = "Actualiza la imagen de una pieza")
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "id", description = "Id de la pieza", example = "1"),
+            @io.swagger.v3.oas.annotations.Parameter(name = "image", description = "Imagen de la pieza", example = "Rueda.jpg"),
+    })
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Imagen de la pieza actualizada"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Imagen de la pieza no actualizada"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "No autorizado"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Prohibido"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Pieza no encontrada")
+    })
+
     @PatchMapping(value = "/image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Pieza> patchVehiculoImage(
             @PathVariable UUID id, @RequestPart("image") MultipartFile image) {
