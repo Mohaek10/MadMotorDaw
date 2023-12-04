@@ -59,7 +59,7 @@ public class ClienteRestController {
      * @return Pagina encontradas con los filtros de Cliente
      */
 
-     @Operation(summary = "Obtiene todos los clientes",description = "Obtiene todos los clientes mediante un listado paginado y filtrado")
+     @Operation(summary = "Obtiene todos los clientes", description = "Obtiene todos los clientes mediante un listado paginado y filtrado")
      @Parameters({
                 @Parameter(name = "nombre", description = "Nombre del Cliente", example = "Juan"),
                 @Parameter(name = "apellido", description = "Apellido del Cliente", example = "Perez"),

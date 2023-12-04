@@ -1,6 +1,7 @@
 package com.madmotor.apimadmotordaw.rest.storage.controllers;
 
 import com.madmotor.apimadmotordaw.rest.storage.service.StorageService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,9 @@ import java.io.IOException;
  * Controlador de la clase Storage
  * Fijamos la ruta de acceso a este controlador con la anotación @RequestMapping
  *
- * @Autowired es una anotación que nos permite inyectar dependencias basadas  en las anotaciones @Controller, @Service, @Component, etc.
+ * @Autowired es una anotación que nos permite inyectar dependencias basadas en las anotaciones @Controller, @Service, @Component, etc.
  * y que se encuentren en nuestro contenedor de Spring.
+ * @version 1.0
  */
 
 @RestController
@@ -33,11 +35,13 @@ public class StorageController {
     }
 
     /**
-    * Método que nos permite devoler un fichero del sistema de ficheros
+    * Método que nos permite devolver un fichero del sistema de ficheros
     * @param filename nombre del fichero
     * @param request
     * @return ResponseEntity<Resource>
      */
+
+    @Operation
 
     @GetMapping(value = "{filename:.+}")
     @ResponseBody
