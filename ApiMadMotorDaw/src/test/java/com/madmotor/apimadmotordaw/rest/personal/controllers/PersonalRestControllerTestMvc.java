@@ -38,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
+@WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
 class PersonalRestControllerTestMvc {
 
     private final String myEndpoint = "/v1/personal";

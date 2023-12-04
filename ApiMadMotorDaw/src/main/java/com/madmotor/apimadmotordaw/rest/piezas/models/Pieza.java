@@ -33,7 +33,7 @@ import java.util.UUID;
 
 public class Pieza {
     @Schema(description = "Imagen de la pieza predeterminada")
-    private static final String IMAGE_DEFAULT = "https://via.placeholder.com/150";
+    public static final String IMAGE_DEFAULT = "https://via.placeholder.com/150";
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -63,7 +63,7 @@ public class Pieza {
     private Integer stock;
 
     @Builder.Default
-    private String image=IMAGE_DEFAULT;
+    public String image=IMAGE_DEFAULT;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }
