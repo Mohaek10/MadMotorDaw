@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("${api.version}/clientes")
+@PreAuthorize("hasRole('ADMIN')")
 public class ClienteRestController {
     private final ClienteService clienteService;
 
