@@ -11,14 +11,19 @@ import org.springframework.stereotype.Service;
 
 @Service("userDetailsService")
 public class AuthUsersServiceImpl implements AuthUsersService {
-
+    // Indicamos las dependencias del servicio
     private final AuthUsersRepository authUsersRepository;
-
+    // Inyectamos las dependencias
     @Autowired
     public AuthUsersServiceImpl(AuthUsersRepository authUsersRepository) {
         this.authUsersRepository = authUsersRepository;
     }
-
+    /**
+     * Método que devuelve un usuario de Spring Security
+     * @param username nombre de usuario
+     * @return UserDetails com los datos del usuario
+     * @throws UserNotFound excepción que se lanza si no se encuentra el usuario 404
+     */
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UserNotFound {

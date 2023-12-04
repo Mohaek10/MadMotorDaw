@@ -10,6 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
+/**
+ * Servicio de la entidad Vehiculo
+ * Proporciona métodos para realizar operaciones CRUD y de paginación
+ */
 
 public interface VehiculoService {
     Page<Vehiculo> findAll(Optional<String> marca, Optional<String> categoria,Optional<String> modelo, Optional<Integer> minYear, Optional<Boolean> isDelete, Optional<Double>kmMax, Optional<Double> precioMax , Optional<Integer> stockMin, Pageable pageable);
