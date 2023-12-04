@@ -4,6 +4,7 @@ package com.madmotor.apimadmotordaw.rest.pedidos.dto;
 import com.madmotor.apimadmotordaw.rest.clientes.Model.Cliente;
 import com.madmotor.apimadmotordaw.rest.pedidos.models.ItemPedido;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class ResponsePedidoDto {
     private String idPedido;
     private UUID idUsuario;

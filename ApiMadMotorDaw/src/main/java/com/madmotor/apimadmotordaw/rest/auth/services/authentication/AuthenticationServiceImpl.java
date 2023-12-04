@@ -22,32 +22,37 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Implementación de nuestro servicio de autenticación
- */
 @Service
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
+    // Indicamos que las dependencias que necesitamos para el framework
     private final AuthUsersRepository authUsersRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
+    // Inyectamos las dependencias
     @Autowired
     public AuthenticationServiceImpl(AuthUsersRepository authUsersRepository, PasswordEncoder passwordEncoder,
                                      JwtService jwtService, AuthenticationManager authenticationManager) {
         this.authUsersRepository = authUsersRepository;
+        // Codificador de contraseñas
         this.passwordEncoder = passwordEncoder;
+        // Servicio de JWT
         this.jwtService = jwtService;
+        // Gestor de autenticación
         this.authenticationManager = authenticationManager;
     }
+
 
     /**
      * Registra un usuario
      *
      * @param request datos del usuario
      * @return Token de autenticación
+     * throws UserAuthNameOrEmailExisten si el nombre de usuario o el email ya existen 404
+     * throws UserDiferentePasswords si las contraseñas no coinciden 400
      */
+
     @Override
     public JwtAuthResponse signUp(UserSignUpRequest request) {
         log.info("Creando usuario: {}", request);
@@ -61,7 +66,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .roles(Stream.of(Role.USER).collect(Collectors.toSet()))
                     .build();
             try {
-                // Salvamos y devolvemos el token
                 var userStored = authUsersRepository.save(user);
                 return JwtAuthResponse.builder().token(jwtService.generateToken(userStored)).build();
             } catch (DataIntegrityViolationException ex) {
@@ -73,16 +77,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
+
     /**
      * Autentica un usuario
      *
      * @param request datos del usuario
      * @return Token de autenticación
+     * throws AuthSingInInvalid si el usuario o la contraseña son incorrectos 404
      */
+
     @Override
     public JwtAuthResponse signIn(UserSignInRequest request) {
         log.info("Autenticando usuario: {}", request);
-        // Autenticamos y devolvemos el token
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = authUsersRepository.findByUsername(request.getUsername())

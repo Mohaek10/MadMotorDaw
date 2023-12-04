@@ -72,7 +72,7 @@ public class ClienteRestController {
      })
 
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Clientes encontrados"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Clientes encontrados")
     })
 
     @GetMapping()

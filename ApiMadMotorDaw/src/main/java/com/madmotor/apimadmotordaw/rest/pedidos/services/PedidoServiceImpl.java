@@ -151,13 +151,6 @@ public class PedidoServiceImpl implements PedidoService {
         }
     }
 
-    private Double getPrecioVehiculo(UUID idVehiculo) {
-        return vehiculoRepository.findById(idVehiculo).map(Vehiculo::getPrecio).orElse(0.0);
-    }
-
-    private Double getPrecioPieza(UUID idPieza) {
-        return piezaRepository.findById(idPieza).map(Pieza::getPrice).orElse(0.0);
-    }
 
     Pedido reservarStock(Pedido pedido) {
         log.info("Reservando stock del pedido: {}", pedido);
@@ -200,17 +193,13 @@ public class PedidoServiceImpl implements PedidoService {
     Pedido returnPedidoItems(Pedido originalPedido) {
         log.info("Devolviendo items al stock del pedido original: {}", originalPedido);
 
-        if (originalPedido.getLineasPedido() == null || originalPedido.getLineasPedido().isEmpty()) {
-            throw new NoItemsValid("El pedido no tiene items de pedido");
-        }
+
 
         for (ItemPedido lineaPedido : originalPedido.getLineasPedido()) {
             if (lineaPedido.getIdVehiculo() != null) {
                 returnStockVehiculo(lineaPedido.getIdVehiculo(), lineaPedido.getCantidadVehiculos());
             } else if (lineaPedido.getIdPieza() != null) {
                 returnStockPieza(lineaPedido.getIdPieza(), lineaPedido.getCantidadPiezas());
-            } else {
-                throw new NoItemsValid("El pedido no tiene ni piezas ni vehículos o no son válidos");
             }
         }
 
@@ -218,7 +207,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     private void returnStockVehiculo(UUID idVehiculo, Integer cantidad) {
-        Vehiculo vehiculo = vehiculoRepository.findById(idVehiculo).orElseThrow(() -> new VehiculoNotFound(idVehiculo.toString()));
+        Vehiculo vehiculo = vehiculoRepository.findById(idVehiculo).get();
         vehiculo.setStock(vehiculo.getStock() + cantidad);
         vehiculoRepository.save(vehiculo);
     }
