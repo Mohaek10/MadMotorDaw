@@ -27,7 +27,9 @@ import java.util.UUID;
 /**
 * Implementación de la interfaz ClienteService que contiene los métodos de la lógica de negocio
 * Aplicacion de Cache
- * @CacheConfig(cacheNames = "clientes") Indica el nombre de la cache
+* @version 1.0
+* @author Joe Brandon
+* @CacheConfig(cacheNames = "clientes") Indica el nombre de la cache
  *
  */
 

@@ -26,10 +26,20 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+/**
+ * Clase PiezaServiceImpl
+ *
+ * En esta clase se definen los métodos de la interfaz PiezaService
+ * @version 1.0
+ * @Author Rubén Fernández
+ */
+
 @Service
 @CacheConfig(cacheNames = "piezas")
 @Slf4j
 public class PiezaServiceImpl implements PiezaService {
+    // Inyectamos el repositorio y el mapper
     private final PiezaRepository piezaRepository;
     private final PiezaMapper piezaMapper;
     private final StorageService storageService;
@@ -41,6 +51,17 @@ public class PiezaServiceImpl implements PiezaService {
         this.piezaMapper = piezaMapper;
         this.storageService = storageService;
     }
+
+    /**
+     * Método para buscar todas las piezas
+     *
+     * @param name
+     * @param description
+     * @param price
+     * @param stock
+     * @param pageable
+     * @return PiezaResponseDTO
+     */
 
 
     @Override
@@ -73,12 +94,28 @@ public class PiezaServiceImpl implements PiezaService {
 
     }
 
+    /**
+     * Método para buscar una pieza por su id
+     *
+     * @param id
+     * @return PiezaResponseDTO
+     * @throws PiezaNotFound (404)
+     */
+
     @Override
     @Cacheable(key = "#id")
     public PiezaResponseDTO findById(UUID id) {
         log.info("Buscando pieza por id: " + id);
         return piezaMapper.toPiezaResponse(piezaRepository.findById(id).orElseThrow(() -> new PiezaNotFound(id)));
     }
+
+    /**
+     * Método para guardar una pieza
+     *
+     * @param pieza
+     * @return PiezaResponseDTO
+     * @throws PiezaNotFound (404)
+     */
 
     @CachePut(key = "#result.id")
     @Override
@@ -87,6 +124,16 @@ public class PiezaServiceImpl implements PiezaService {
         var piezaToSave = piezaRepository.save(piezaMapper.toPieza(pieza));
         return piezaMapper.toPiezaResponse(piezaToSave);
     }
+
+    /**
+     * Método para actualizar una pieza
+     *
+     * @param id
+     * @param pieza
+     * @return PiezaResponseDTO
+     * @throws PiezaNotFound (404)
+     */
+
     @CachePut(key = "#result.id")
     @Override
     public PiezaResponseDTO update(UUID id, PiezaUpdateDTO pieza) {
@@ -96,9 +143,20 @@ public class PiezaServiceImpl implements PiezaService {
         return piezaMapper.toPiezaResponse(piezaUpdated);
 
     }
+
+    /**
+     * Método para actualizar la imagen de una pieza
+     *
+     * @param id
+     * @param image
+     * @param withUrl
+     * @return Pieza
+     * @throws PiezaNotFound (404)
+     */
+
     public Pieza updateImage(String id, MultipartFile image, Boolean withUrl) {
         log.info("Actualizando imagen del vehiculo con id: " + id);
-        var piezaActual = piezaRepository.findById(UUID.fromString(id)).orElseThrow(() -> new VehiculoNotFound(id));
+        var piezaActual = piezaRepository.findById(UUID.fromString(id)).orElseThrow(() -> new PiezaNotFound(UUID.fromString(id)));
         if (piezaActual.getImage() != null && !piezaActual.getImage().equals(Vehiculo.IMAGE_DEFAULT)) {
             storageService.delete(piezaActual.getImage());
         }
@@ -121,6 +179,13 @@ public class PiezaServiceImpl implements PiezaService {
         return piezaGuardada;
     }
 
+    /**
+     * Método para borrar una pieza
+     *
+     * @param id
+     * @throws PiezaNotFound (404)
+     */
+    
     @Override
     public void deleteById(UUID id) {
             log.info("Borrando pieza con id: " + id);
