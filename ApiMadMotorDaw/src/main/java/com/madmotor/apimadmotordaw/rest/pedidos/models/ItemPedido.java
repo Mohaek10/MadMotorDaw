@@ -30,41 +30,37 @@ public class ItemPedido {
 
     @Min(value = 0, message = "El precio del producto no puede ser negativo")
     @Builder.Default
-    private Double precioVehiculo = 0.0;
+    private Double precioVehiculo=0.0;
+
+    @Builder.Default
+    private Double precioTotalVehiculo=0.0;
 
     @Min(value = 0, message = "El precio del producto no puede ser negativo")
     @Builder.Default
     private Double precioPieza = 0.0;
 
     @Builder.Default
+    private Double precioTotalPieza=0.0;
+
+    @Builder.Default
     private Double total = 0.0;
 
-    public void setCantidadVehiculos(Integer cantidadVehiculos) {
-        this.cantidadVehiculos = cantidadVehiculos;
-        recalcularTotal();
-    }
 
-    public void setCantidadPiezas(Integer cantidadPiezas) {
-        this.cantidadPiezas = cantidadPiezas;
-        recalcularTotal();
-    }
+
 
     public void setPrecioVehiculo(Double precioVehiculo) {
-        this.precioVehiculo = precioVehiculo;
+        this.precioTotalVehiculo = precioVehiculo;
         recalcularTotal();
     }
 
     public void setPrecioPieza(Double precioPieza) {
-        this.precioPieza = precioPieza;
+        this.precioTotalPieza = precioPieza;
         recalcularTotal();
     }
 
-    public void setTotal(Double total) {
-        this.total = total;
-    }
 
     private void recalcularTotal() {
-        this.total = (this.cantidadVehiculos * this.precioVehiculo) + (this.cantidadPiezas * this.precioPieza);
+        this.total =  this.precioTotalVehiculo + this.precioTotalPieza;
     }
 
 }

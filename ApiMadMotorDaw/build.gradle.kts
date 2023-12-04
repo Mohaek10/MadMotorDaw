@@ -55,6 +55,9 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     //Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    //Postgres SQL Para produccion
+    implementation("org.postgresql:postgresql")
+
 
 
 

@@ -9,6 +9,7 @@ import com.madmotor.apimadmotordaw.rest.vehiculos.services.VehiculoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,8 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping("${api.version}/vehiculos")
+@PreAuthorize("hasRole('USER')")
+@Tag(name = "Vehiculos", description = "Vehiculos API")
 public class VehiculoRestController {
     //Indicamos las depdenecia que vamos a usar
     private VehiculoService vehiculoService;
@@ -132,6 +136,7 @@ public class VehiculoRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Categoria no encontrada")
     })
     @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Vehiculo> createVehiculo(@Valid @RequestBody VehiculoCreateDto vehiculo) {
         log.info("Creando vehiculo: " + vehiculo);
         return ResponseEntity.ok(vehiculoService.save(vehiculo));
@@ -155,6 +160,7 @@ public class VehiculoRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Vehiculo no encontrado")
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Vehiculo> updateVehiculo(@PathVariable UUID id, @Valid @RequestBody VehiculoUpdateDto vehiculoUpdateDto) {
         log.info("Actualizando vehiculo con id: " + id);
         return ResponseEntity.ok(vehiculoService.update(id.toString(), vehiculoUpdateDto));
@@ -179,6 +185,7 @@ public class VehiculoRestController {
     })
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Vehiculo> patchVehiculo(@PathVariable UUID id, @Valid @RequestBody VehiculoUpdateDto vehiculoUpdateDto) {
         log.info("Actualizando vehiculo de manera parcial, con id: " + id);
         return ResponseEntity.ok(vehiculoService.update(id.toString(), vehiculoUpdateDto));
@@ -199,6 +206,7 @@ public class VehiculoRestController {
     })
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteVehiculo(@PathVariable UUID id) {
         log.info("Borrando vehiculo con id: " + id);
         vehiculoService.deleteById(id.toString());
@@ -224,6 +232,7 @@ public class VehiculoRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Error de imagen en el Servidor")
     })
     @PatchMapping(value = "/image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Vehiculo> patchVehiculoImage(
             @PathVariable UUID id, @RequestPart("image") MultipartFile image) {
 

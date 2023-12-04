@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,8 +84,11 @@ public class PedidoServiceImpl implements PedidoService {
         log.info("Creando pedido");
         Optional<Cliente> cl = Optional.ofNullable(clienteRepository.findById(UUID.fromString(pedido.getIdUsuario())).orElseThrow(() -> new ClienteNotFound(pedido.getIdUsuario())));
         ClienteInfoDto clienteInfoDto = clienteMapper.toClienteInfoDto(cl.get());
-
+        log.info("Cliente del pedido: {}", clienteInfoDto);
+        log.info("Items del pedido: {}", pedido.getLineasPedido());
         Pedido pedidoToSave = pedidoMapper.toPedido(pedido, clienteInfoDto);
+        pedidoToSave.setLineasPedido(pedido.getLineasPedido());
+        log.info("Items del pedido: {}", pedidoToSave.getLineasPedido());
         checkPedido(pedidoToSave);
         pedidoToSave = reservarStock(pedidoToSave);
         pedidoToSave.setCreatedAt(LocalDateTime.now());
@@ -108,6 +112,7 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedidoToSave = pedidoMapper.toPedido(updatePedidoDto, pedidoToUpdate, clienteInfoDto);
 
         returnPedidoItems(pedidoToSave);
+
         checkPedido(pedidoToSave);
         pedidoToSave = reservarStock(pedidoToSave);
         pedidoToSave.setUpdatedAt(LocalDateTime.now());
@@ -126,9 +131,9 @@ public class PedidoServiceImpl implements PedidoService {
         for (ItemPedido itemPedido : pedido.getLineasPedido()) {
 
             if (itemPedido.getIdVehiculo() != null) {
-                validateExistenceAndStockVehiculo(itemPedido.getIdVehiculo(), itemPedido.getCantidadVehiculos(), itemPedido.getPrecioVehiculo());
+                validateExistenceAndStockVehiculo(itemPedido.getIdVehiculo(), itemPedido.getCantidadVehiculos(), itemPedido.getPrecioTotalVehiculo());
             } else if (itemPedido.getIdPieza() != null) {
-                validateExistenceAndStockPieza(itemPedido.getIdPieza(), itemPedido.getCantidadPiezas(), itemPedido.getPrecioPieza());
+                validateExistenceAndStockPieza(itemPedido.getIdPieza(), itemPedido.getCantidadPiezas(), itemPedido.getPrecioTotalPieza());
             } else {
                 throw new NoItemsValid("El pedido no tiene ni piezas ni vehículos o no son validos");
             }
@@ -142,12 +147,18 @@ public class PedidoServiceImpl implements PedidoService {
         if (vehiculo.getStock() < cantidad) {
             throw new NoStockForVehiculos(idVehiculo.toString(), cantidad, vehiculo.getStock());
         }
+        if (!Objects.equals(vehiculo.getPrecio(), precio)) {
+            throw new VehiculoBadPrice(idVehiculo.toString(), precio, vehiculo.getPrecio());
+        }
     }
 
     private void validateExistenceAndStockPieza(UUID idPieza, Integer cantidad, Double precio) {
         Pieza pieza = piezaRepository.findById(idPieza).orElseThrow(() -> new PiezaNotFound(idPieza.toString()));
         if (pieza.getStock() < cantidad) {
             throw new NoStockForPiezas(idPieza.toString(), cantidad, pieza.getStock());
+        }
+        if (!Objects.equals(pieza.getPrice(), precio)) {
+            throw new PiezaBadPrice(idPieza.toString());
         }
     }
 
@@ -162,14 +173,25 @@ public class PedidoServiceImpl implements PedidoService {
         for (ItemPedido lineaPedido : pedido.getLineasPedido()) {
             if (lineaPedido.getIdVehiculo() != null) {
                 reservarStockVehiculo(lineaPedido.getIdVehiculo(), lineaPedido.getCantidadVehiculos());
+                lineaPedido.setPrecioVehiculo(lineaPedido.getCantidadVehiculos() * lineaPedido.getPrecioVehiculo());
             } else if (lineaPedido.getIdPieza() != null) {
                 reservarStockPieza(lineaPedido.getIdPieza(), lineaPedido.getCantidadPiezas());
+                lineaPedido.setPrecioPieza(lineaPedido.getCantidadPiezas() * lineaPedido.getPrecioPieza());
             } else {
                 throw new NoItemsValid("El pedido no tiene ni piezas ni vehículos o no son válidos");
             }
         }
+        var total = pedido.getLineasPedido().stream()
+                .map(lineaPedido -> lineaPedido.getPrecioTotalVehiculo() + lineaPedido.getPrecioTotalPieza())
+                .reduce(0.0, Double::sum);
+        pedido.setTotal(total);
+        var totalItems = pedido.getLineasPedido().stream()
+                .map(lineaPedido -> lineaPedido.getCantidadVehiculos() + lineaPedido.getCantidadPiezas())
+                .reduce(0, Integer::sum);
 
+        pedido.setTotalItems(totalItems);
         return pedido;
+
     }
 
     private void reservarStockVehiculo(UUID idVehiculo, Integer cantidad) {
@@ -192,7 +214,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     Pedido returnPedidoItems(Pedido originalPedido) {
         log.info("Devolviendo items al stock del pedido original: {}", originalPedido);
-
 
 
         for (ItemPedido lineaPedido : originalPedido.getLineasPedido()) {

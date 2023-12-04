@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,6 +26,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@WithMockUser(username = "admin", password = "admin", roles = {"ADMIN", "USER"})
+
 class VehiculoTestControllerMock {
     private final Categoria categoria = new Categoria(1L, "Camion", LocalDateTime.now(), LocalDateTime.now(), false);
     private final Vehiculo vehiculo1 = new Vehiculo(UUID.randomUUID(), "Mercedes", "Actros", 2019, 100000.0, 100000.0, 100, "https://loremflickr.com/150/150", "Camion de 3 ejes", LocalDateTime.now(), LocalDateTime.now(), categoria, false);

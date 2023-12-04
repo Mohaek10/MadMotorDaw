@@ -67,16 +67,16 @@ public class Pedido {
     public void setLineasPedido(List<ItemPedido> lineasPedido) {
         this.lineasPedido = lineasPedido;
         this.totalItems = lineasPedido != null ? lineasPedido.size() : 0;
+        recalcularTotal();
+    }
+
+    private void recalcularTotal() {
         this.total = calcularTotal(lineasPedido);
     }
 
-    Double calcularTotal(List<ItemPedido> lineasPedido) {
+    private Double calcularTotal(List<ItemPedido> lineasPedido) {
         if (lineasPedido != null) {
-            Double t = 0.0;
-            for (ItemPedido linea : lineasPedido) {
-                t += linea.getTotal();
-            }
-            return t;
+            return lineasPedido.stream().mapToDouble(ItemPedido::getTotal).sum();
         } else {
             return 0.0;
         }
