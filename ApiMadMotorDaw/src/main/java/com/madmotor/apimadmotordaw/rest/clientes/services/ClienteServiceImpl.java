@@ -9,6 +9,7 @@ import com.madmotor.apimadmotordaw.rest.clientes.exceptions.ClienteFailSave;
 import com.madmotor.apimadmotordaw.rest.clientes.exceptions.ClienteNotFound;
 import com.madmotor.apimadmotordaw.rest.clientes.mappers.ClienteMapper;
 import com.madmotor.apimadmotordaw.rest.storage.service.StorageService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -23,9 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
-/*
+/**
 * Implementación de la interfaz ClienteService que contiene los métodos de la lógica de negocio
 * Aplicacion de Cache
+* @version 1.0
+* @author Joe Brandon
+* @CacheConfig(cacheNames = "clientes") Indica el nombre de la cache
+ *
  */
 
 @Service
@@ -45,14 +50,14 @@ public class ClienteServiceImpl implements ClienteService{
         this.clienteMapper = clienteMapper;
         this.storageService = storageService;
     }
-    /*
+    /**
     * Método que actuallizar un cliente en la base de datos
     * @param id Identificador del cliente de tipo UUID
-    * @param clienteCreateRequest Objeto con los datos del cliente
+    * @param clienteUpdateRequest Objeto con los datos del cliente a actualizar
     * @return ClienteReponse Objeto con los datos del cliente actualizado
     * @throws ClienteFailSave Excepción que se lanza cuando no se ha podido actualizar el cliente
      */
-    @CachePut
+    @CachePut(key ="#result.id")
     @Override
     public ClienteReponse updateByID(UUID id, ClienteUpdateRequest clienteUpdateRequest) {
         log.info("Actualizando el cliente con el UUID número: " + id);
@@ -65,20 +70,20 @@ public class ClienteServiceImpl implements ClienteService{
         // Devolver el objeto cliente actualizado
         return clienteMapper.toClienteReponse(clienteActualizado);
     }
-    /*
+    /**
     * Método que busca un cliente por su ID
     * @param id Identificador del cliente de tipo UUID
     * @return ClienteReponse Objeto con los datos del cliente
     * @throws ClienteNotFound Excepción que se lanza cuando no se ha encontrado el cliente
      */
-    @Cacheable
+    @Cacheable(key = "#id")
     @Override
     public ClienteReponse findByID(UUID id) {
         log.info("Buscando el cliente con el dni numero : " + id );
         // Buscar el cliente existente por su ID en el caso contrario lanza una excepción
         return clienteMapper.toClienteReponse(clienteRepository.findById(id).orElseThrow(()->new ClienteNotFound(id.toString())));
     }
-    /*
+    /**
     * Método que busca todos los clientes y los agrupa de acuerdo a los criterios de búsqueda
     * @param pageable Objeto con los datos de la paginación
     * @Param nombre Nombre del cliente
@@ -118,13 +123,15 @@ public class ClienteServiceImpl implements ClienteService{
         // Se devuelven los clientes basados en los criterios de busqueda
         return clienteRepository.findAll(criterio, pageable).map(clienteMapper::toClienteReponse);
     }
-    /*
+    /**
     * Método que elimina un cliente por su ID
     * @param id Identificador del cliente de tipo UUID
     * @throws ClienteNotFound Excepción que se lanza cuando no se ha encontrado el cliente
      */
     @CacheEvict
     @Override
+    @Transactional
+    @CachePut(key = "#id")
     public void deleteById(UUID id) {
         log.info("Eliminando el cliente con el UUID numero : " + id);
         // Buscar el cliente existente por su ID en el caso contrario lanza una excepción
@@ -136,13 +143,13 @@ public class ClienteServiceImpl implements ClienteService{
         // Elimina el cliente de la base de datos
         clienteRepository.delete(clienteAElminar);
     }
-    /*
+    /**
     * Método que guarda un cliente en la base de datos
     * @param clienteCreateRequest Objeto con los datos del cliente
     * @return ClienteReponse Objeto con los datos del cliente guardado
     * @throws ClienteFailSave Excepción que se lanza cuando no se ha podido guardar el cliente
      */
-    @CachePut
+    @CachePut(key = "#result.id")
     @Override
     public ClienteReponse savePost(ClienteCreateRequest clienteCreateRequest) {
         log.info("Guardando a un nuevo cliente");
@@ -157,7 +164,7 @@ public class ClienteServiceImpl implements ClienteService{
             throw new ClienteFailSave("Ha habido un error al registrar al cliente");
         }
     }
-    /*
+    /**
     * Método que actualiza la imagen de un cliente
     * @param id Identificador del cliente de tipo UUID
     * @param image Imagen del cliente
@@ -165,8 +172,9 @@ public class ClienteServiceImpl implements ClienteService{
     * @return ClienteReponse Objeto con los datos del cliente actualizado
     * @throws ClienteNotFound Excepción que se lanza cuando no se ha encontrado el cliente
      */
-    @CachePut
     @Override
+    @CachePut(key = "#result.id")
+    @Transactional
     public ClienteReponse updateImage(UUID id, MultipartFile image,  Boolean withUrl) {
         log.info("Actualizando la imagen del cliente con el UUID numero: " + id);
         // Buscar el cliente existente por su ID en el caso contrario lanza una excepción

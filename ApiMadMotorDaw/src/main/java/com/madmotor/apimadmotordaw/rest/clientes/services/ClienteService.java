@@ -11,6 +11,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Interfaz ClienteService
+ *
+ * En esta interfaz se definen los métodos que se utilizarán en el ClienteServiceImpl
+ * @version 1.0
+ * @author Joe Brandon
+ */
+
 public interface ClienteService {
     ClienteReponse updateByID(UUID id, ClienteUpdateRequest clienteUpdateRequest);
     ClienteReponse findByID(UUID id);

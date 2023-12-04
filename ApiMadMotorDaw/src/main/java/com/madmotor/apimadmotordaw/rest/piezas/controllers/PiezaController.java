@@ -23,6 +23,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+/**
+ * Controlador de la pieza del tipo RestController
+ *
+ * Con esta clase fijamos la ruta de acceso a este controlador con la anotación @RequestMapping
+ *
+ * @Autowired es una anotación que nos permite inyectar dependencias en las anotaciones @Controller, @Service, @Component, ...
+ * que se encuentren en nuestro contenedor Spring.
+ *
+ * @version 1.0
+ * @author Rubén Fernández
+ */
 
 @RestController
 @Slf4j
@@ -36,6 +47,20 @@ public class PiezaController {
         this.piezaService = piezaService;
 
     }
+
+    /**
+     * Obtiene todas las piezas
+     *
+     * @param name nombre de la pieza
+     * @param description descripción de la pieza
+     * @param price precio de la pieza
+     * @param stock stock de la pieza
+     * @param page número de página
+     * @param size tamaño de la página
+     * @param sortBy campo por el que se ordena
+     * @param order orden ascendente o descendente
+     * @return todos los parámetros de las piezas encontradas
+     */
     @GetMapping()
     public ResponseEntity<PageResponse<PiezaResponseDTO>> getAllPiezas(
             @RequestParam (required = false) Optional<String> name,
@@ -54,12 +79,27 @@ public class PiezaController {
 
     }
 
+    /**
+     * Obtiene todas las piezas por su id
+     *
+     * @param id id de la pieza
+     * @return ids de las piezas encontradas
+     * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si no se encuentra la pieza con el id (404)
+     */
+
     @GetMapping("/{id}")
     public ResponseEntity<PiezaResponseDTO> getPiezaById(@PathVariable @Valid UUID id) {
         log.info("Buscando pieza por id: " + id);
         return ResponseEntity.ok(piezaService.findById(id));
     }
 
+    /**
+     * Crea una nueva pieza
+     *
+     * @param piezaCreateDTO pieza a crear basado en el DTO
+     * @return los parámetros de la pieza creada
+     * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido crear (404)
+     */
     @PostMapping()
 
     public ResponseEntity<PiezaResponseDTO> createPieza(@Valid @RequestBody PiezaCreateDTO piezaCreateDTO) {
@@ -67,6 +107,14 @@ public class PiezaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(piezaService.save(piezaCreateDTO));
     }
 
+    /**
+     * Actualiza una pieza
+     *
+     * @param id id de la pieza
+     * @param piezaUpdateDTO pieza a actualizar basado en el DTO
+     * @return los parámetros de la pieza actualizada
+     * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido actualizar (404)
+     */
     @PutMapping("/{id}")
 
     public ResponseEntity<PiezaResponseDTO> updatePieza(@PathVariable UUID id, @Valid @RequestBody PiezaUpdateDTO piezaUpdateDTO) {
@@ -74,6 +122,14 @@ public class PiezaController {
         return ResponseEntity.ok(piezaService.update(id, piezaUpdateDTO));
     }
 
+    /**
+     * Actualiza parcialmente una pieza
+     *
+     * @param id id de la pieza
+     * @param piezaUpdateDTO pieza a actualizar basado en el DTO
+     * @return los parámetros de la pieza actualizada
+     * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido actualizar (404)
+     */
 
     @PatchMapping("/{id}")
     public ResponseEntity<PiezaResponseDTO> updatePartialPieza(@PathVariable UUID id, @Valid @RequestBody PiezaUpdateDTO piezaUpdateDTO) {
@@ -81,12 +137,29 @@ public class PiezaController {
         return ResponseEntity.ok(piezaService.update(id, piezaUpdateDTO));
     }
 
+    /**
+     * Borra una pieza
+     *
+     * @param id id de la pieza
+     * @return 204 si la pieza se ha borrado correctamente
+     * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido borrar (404)
+     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePieza(@PathVariable @Valid UUID id) {
         log.info("Borrando pieza por id: " + id);
         piezaService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    /**
+     * Actualiza la imagen de una pieza
+     *
+     * @param id id de la pieza
+     * @param image imagen de la pieza
+     * @return los parámetros de la pieza actualizada
+     * @throws com.madmotor.apimadmotordaw.rest.piezas.exceptions.PiezaNotFound si la pieza no se ha podido actualizar (404)
+     */
     @PatchMapping(value = "/image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Pieza> patchVehiculoImage(
             @PathVariable UUID id, @RequestPart("image") MultipartFile image) {
@@ -106,6 +179,12 @@ public class PiezaController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    /**
+     * Manejador de excepciones de validación
+     * @param ex excepción
+     * @return Mapa de errores de validación con el campo y el mensaje
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

@@ -20,7 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-/*
+/**
  * Implementación de la interfaz CategoriaService que contiene los métodos de la lógica de negocio
  * Aplicacion de Cache
  */
@@ -37,7 +37,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         this.categoriaRepository = categoriaRepository;
         this.categoriaMapper = categoriaMapper;
     }
-    /*
+    /**
      * Método que devuelve todas las categorias con paginacion
      * @param nombre el nombre de la categoria
      * @param isDeleted si la categoria esta borrada o no
@@ -66,7 +66,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Se devuelve la lista de categorias
         return categoriaRepository.findAll(criterio, pageable);
     }
-    /*
+    /**
      * Método que devuelve una categoria por su id tipo Long si no se encuentra devuelve una excepcion
      * @param id el id de la categoria
      * @return Categoria
@@ -81,7 +81,7 @@ public class CategoriaServiceImpl implements CategoriaService {
                 .orElseThrow(() -> new CategoriaNotFound("No se encontro la categoria con el id " + id))
                 ;
     }
-    /*
+    /**
      * Método que devuelve una categoria por su nombre si no se encuentra devuelve una excepcion
      * @param name el nombre de la categoria
      * @return Categoria la categoria encontrada
@@ -94,7 +94,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         return categoriaRepository.findByNameEqualsIgnoreCase(name)
                 .orElseThrow(() -> new CategoriaNotFound("No se encontro la categoria con el nombre " + name));
     }
-    /*
+    /**
      * Método que guarda una categoria si ya existe una categoria con ese nombre devuelve una excepcion
      * @param categoria la categoria a guardar basado en los datos necesarios del DTO
      * @return Categoria la categoria guardada
@@ -115,7 +115,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
 
     }
-    /*
+    /**
      * Método que actualiza una categoria por su id si no se encuentra devuelve una excepcion
      * @param id el id de la categoria a actualizar
      * @param catDto la categoria a actualizar basado en los datos necesarios del DTO
@@ -139,7 +139,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Actualizamos los datos
         return categoriaRepository.save(categoriaMapper.map(catDto, categoriaActual));
     }
-    /*
+    /**
      * Método que borra una categoria por su id si no se encuentra devuelve una excepcion
      * @param id el id de la categoria a borrar
      * @throws CategoriaExists si ya existe una categoria con ese nombre 409

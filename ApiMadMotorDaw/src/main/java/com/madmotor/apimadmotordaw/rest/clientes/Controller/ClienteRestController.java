@@ -30,10 +30,14 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 /**
  * Controlador de clientes del tipo RestController
+ *
  * Fijamos la ruta de acceso a este controlador con la anotación @RequestMapping
  *
  * @Autowired es una anotación que nos permite inyectar dependencias basadas  en las anotaciones @Controller, @Service, @Component, etc.
  * y que se encuentren en nuestro contenedor de Spring.
+ *
+ * @version 1.0
+ * @author Joe Brandon
  */
 
 @RestController
@@ -68,7 +72,7 @@ public class ClienteRestController {
      })
 
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Clientes encontrados"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Clientes encontrados")
     })
 
     @GetMapping()

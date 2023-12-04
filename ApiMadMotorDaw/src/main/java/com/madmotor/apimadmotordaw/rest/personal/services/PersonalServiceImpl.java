@@ -21,11 +21,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Clase PersonalServiceImpl
+ *
+ * En esta clase se definen los métodos de la interfaz PersonalService
+ * @version 1.0
+ * @author Miguel Vicario
+ */
+
 @Service
 @CacheConfig(cacheNames = "personal")
 @Slf4j
 
 public class PersonalServiceImpl implements PersonalService {
+    // Inyectamos el repositorio y el mapper
     private final PersonalRepository personalRepository;
     private final PersonalMapper personalMapper;
 
@@ -37,7 +46,13 @@ public class PersonalServiceImpl implements PersonalService {
         this.personalMapper = personalMapper;
     }
 
-
+    /**
+     * Método para guardar un personal creado
+     *
+     * @param personalCreateDto
+     * @return PersonalResponseDTO
+     * @throws com.madmotor.apimadmotordaw.rest.personal.exceptions.PersonalFailSave Excepción que se lanza cuando no puedes guardar un personal
+     */
 
     @Override
     @CachePut
@@ -46,6 +61,14 @@ public class PersonalServiceImpl implements PersonalService {
         return personalMapper.toPersonalResponseDto(personalRepository.save(personalMapper.toPersonal(personalCreateDto)));
     }
 
+    /**
+     * Método para actualizar un personal
+     *
+     * @param id
+     * @param personalUpdateDto
+     * @return PersonalResponseDTO
+     * @throws com.madmotor.apimadmotordaw.rest.personal.exceptions.PersonalNotFound Excepción que se lanza cuando no encuentras un personal con el id proporcionado
+     */
     @Override
     @CachePut
     public PersonalResponseDTO update(Long id, PersonalUpdateDTO personalUpdateDto) {
@@ -58,7 +81,20 @@ public class PersonalServiceImpl implements PersonalService {
         return personalMapper.toPersonalResponseDto(personalActualizado);
     }
 
-
+    /**
+     * Método para mostrar todos los parámetros del personal
+     *
+     * @param dni
+     * @param nombre
+     * @param apellidos
+     * @param fechaNacimiento
+     * @param direccion
+     * @param iban
+     * @param sueldo
+     * @param telefono
+     * @param pageable
+     * @return PersonalResponseDTO
+     */
     @Override
     public Page<PersonalResponseDTO> findAll(Optional<String> dni, Optional<String> nombre, Optional<String> apellidos, Optional<String> fechaNacimiento, Optional<String> direccion, Optional<String> iban, Optional<Double> sueldo, Optional<String> telefono, Pageable pageable) {
         Specification<Personal> specDni = (root, query, criteriaBuilder) ->
@@ -103,12 +139,26 @@ public class PersonalServiceImpl implements PersonalService {
         return personalRepository.findAll(criterio, pageable).map(personalMapper::toPersonalResponseDto);
 
     }
+
+    /**
+     * Método para buscar un personal por su id
+     *
+     * @param id
+     * @return PersonalResponseDTO
+     * @throws com.madmotor.apimadmotordaw.rest.personal.exceptions.PersonalNotFound Excepción que se lanza cuando no encuentras un personal con el id proporcionado
+     */
     @Override
     public PersonalResponseDTO findById(Long id) {
         log.info("Buscando trabajador@ por id: " + id);
         return personalRepository.findById(id).map(personalMapper::toPersonalResponseDto).orElseThrow(() -> new PersonalNotFound("Trabajador@ " + id + " no encontrado"));
     }
 
+    /**
+     * Método para borrar un personal por su id
+     *
+     * @param id
+     * @throws com.madmotor.apimadmotordaw.rest.personal.exceptions.PersonalNotFound Excepción que se lanza cuando no encuentras un personal con el id proporcionado
+     */
     @Override
     @CacheEvict
     public void deleteById(Long id) {
