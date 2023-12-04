@@ -171,9 +171,7 @@ public class UsersRestController {
             @AuthenticationPrincipal User user,
             @Valid @RequestBody CreatePedidoDto pedido
     ) {
-        log.info("Creando pedido: " + pedido);
 
-        pedido.setIdUsuario(user.getId().toString());
         log.info("Creando pedido: " + pedido);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidosService.save(pedido));
     }
@@ -185,7 +183,6 @@ public class UsersRestController {
             @PathVariable("id") ObjectId idPedido,
             @Valid @RequestBody UpdatePedidoDto pedido) {
         log.info("Actualizando pedido con id: " + idPedido);
-        pedido.setIdUsuario(user.getId().toString());
         return ResponseEntity.ok(pedidosService.update(pedido,idPedido));
     }
 

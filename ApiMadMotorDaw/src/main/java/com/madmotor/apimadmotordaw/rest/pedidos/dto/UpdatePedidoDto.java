@@ -2,12 +2,14 @@ package com.madmotor.apimadmotordaw.rest.pedidos.dto;
 
 import com.madmotor.apimadmotordaw.rest.pedidos.models.ItemPedido;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@Builder
 public class UpdatePedidoDto {
 
     @NotNull(message = "El id del pedido no puede ser nulo")
