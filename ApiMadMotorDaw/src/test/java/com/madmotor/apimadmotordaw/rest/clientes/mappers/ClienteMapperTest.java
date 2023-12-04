@@ -78,4 +78,22 @@ class ClienteMapperTest {
                 () -> assertEquals(cliente.getCodigoPostal(),resultado.getCodigoPostal())
         );
     }
+    @Test
+    void toClienteInfoDto(){
+        Cliente cliente=Cliente.builder()
+                .nombre("EL cambiazo")
+                .apellido("Perez")
+                .direccion("Calle 123")
+                .codigoPostal(12345)
+                .dni("12345678A")
+                .imagen("paqui.png")
+                .build();
+        var resultado=clienteMapper.toClienteInfoDto(cliente);
+        assertAll(
+                () -> assertEquals(cliente.getNombre(),resultado.getNombre()),
+                () -> assertEquals(cliente.getApellido(),resultado.getApellido()),
+                () -> assertEquals(cliente.getDireccion(),resultado.getDireccion()),
+                () -> assertEquals(cliente.getCodigoPostal(),resultado.getCodigoPostal())
+        );
+    }
 }
