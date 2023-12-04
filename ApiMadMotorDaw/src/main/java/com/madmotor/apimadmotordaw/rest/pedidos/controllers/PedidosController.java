@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("${api.version}/pedidos")
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')") //Este endpoint solo lo puede usar un usuario con rol ADMIN osea el dueño o trbajador, desde aqui un cliente no deberi de crear pedidos
 public class PedidosController {
     private final PedidoService pedidosService;
     private final PaginationLinksUtils paginationLinksUtils;

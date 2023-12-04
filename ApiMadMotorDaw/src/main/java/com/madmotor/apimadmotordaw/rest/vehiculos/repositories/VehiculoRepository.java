@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Repositorio de la entidad Vehiculo
+ * Utiliza JPARepository y JpaSpecificationExecutor
+ * JPARepository: Proporciona métodos para realizar operaciones CRUD y de paginación
+ * JpaSpecificationExecutor: Proporciona métodos para realizar consultas dinámicas
+ */
 @Repository
 public interface VehiculoRepository extends JpaRepository<Vehiculo, UUID>, JpaSpecificationExecutor<Vehiculo> {
 

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,8 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @RequestMapping("${api.version}/categorias")
+@PreAuthorize("hasRole('USER')")
+@Tag(name = "Categorias", description = "Listado de categorias")
 
 public class CategoriaestController {
     // Indicamos las dependencias que vamos a usar
@@ -116,6 +120,7 @@ public class CategoriaestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Categoria ya existe")
     })
     @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Categoria> createCategory(@Valid @RequestBody CategoriaDto categoriaCreateDto) {
         log.info("Creando categegoría: " + categoriaCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriasService.save(categoriaCreateDto));
@@ -139,6 +144,7 @@ public class CategoriaestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Categoria ya existente")
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Categoria> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriaDto categoriaUpdateDto) {
         log.info("Actualizando categoria por id: " + id + " con categoria: " + categoriaUpdateDto);
         return ResponseEntity.ok(categoriasService.update(id, categoriaUpdateDto));
@@ -160,6 +166,7 @@ public class CategoriaestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Categoria no se puede borrar")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         log.info("Borrando categoria por id: " + id);
         categoriasService.delete(id);

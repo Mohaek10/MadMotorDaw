@@ -30,6 +30,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long>, Jpa
 
     List<Categoria> findAllByNameContainsIgnoreCaseAndIsDeletedFalse(String nombre);
 
+    //Actualizar la categoria con isDeleted a true por si tiene vehiculos
     @Modifying
     @Query("UPDATE Categoria p SET p.isDeleted = true WHERE p.id = :id")
     void updateIsDeletedToTrueById(Long id);

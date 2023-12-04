@@ -53,7 +53,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Si no se pasa el nombre, se devuelve true
         //Criterio de busqueda por nombre
         Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
-                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + m + "%"))
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
         //Criterio de busqueda por borrado
         // Si no se pasa el borrado, se devuelve true
@@ -66,7 +66,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Se devuelve la lista de categorias
         return categoriaRepository.findAll(criterio, pageable);
     }
-    /*
+    /**
      * Método que devuelve una categoria por su id tipo Long si no se encuentra devuelve una excepcion
      * @param id el id de la categoria
      * @return Categoria
@@ -74,34 +74,34 @@ public class CategoriaServiceImpl implements CategoriaService {
      */
 
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Categoria findById(Long id) {
         // Se busca la categoria por su id y si no se encuentra se devuelve una excepcion
         return categoriaRepository.findById(id)
                 .orElseThrow(() -> new CategoriaNotFound("No se encontro la categoria con el id " + id))
                 ;
     }
-    /*
+    /**
      * Método que devuelve una categoria por su nombre si no se encuentra devuelve una excepcion
      * @param name el nombre de la categoria
      * @return Categoria la categoria encontrada
      * @throws CategoriaNotFound si no se encuentra la categoria 404
      */
     @Override
-    @Cacheable
+    @Cacheable(key = "#name")
     public Categoria findByName(String name) {
         // Se busca la categoria por su nombre y si no se encuentra se devuelve una excepcion
         return categoriaRepository.findByNameEqualsIgnoreCase(name)
                 .orElseThrow(() -> new CategoriaNotFound("No se encontro la categoria con el nombre " + name));
     }
-    /*
+    /**
      * Método que guarda una categoria si ya existe una categoria con ese nombre devuelve una excepcion
      * @param categoria la categoria a guardar basado en los datos necesarios del DTO
      * @return Categoria la categoria guardada
      * @throws CategoriaExists si ya existe una categoria con ese nombre
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria save(CategoriaDto categoria) {
         // Se comprueba si ya existe una categoria con ese nombre
         if (categoriaRepository.findByNameEqualsIgnoreCase(categoria.getName()).isEmpty()) {
@@ -115,7 +115,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
 
     }
-    /*
+    /**
      * Método que actualiza una categoria por su id si no se encuentra devuelve una excepcion
      * @param id el id de la categoria a actualizar
      * @param catDto la categoria a actualizar basado en los datos necesarios del DTO
@@ -124,7 +124,7 @@ public class CategoriaServiceImpl implements CategoriaService {
      * @throws CategoriaNotFound si no se encuentra la categoria 404
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria update(Long id, CategoriaDto catDto) {
         // Se comprueba si ya existe una categoria con ese nombre y si no lanza una excepcion 404 not found
         Categoria categoriaActual = findById(id);
@@ -139,7 +139,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Actualizamos los datos
         return categoriaRepository.save(categoriaMapper.map(catDto, categoriaActual));
     }
-    /*
+    /**
      * Método que borra una categoria por su id si no se encuentra devuelve una excepcion
      * @param id el id de la categoria a borrar
      * @throws CategoriaExists si ya existe una categoria con ese nombre 409
@@ -154,9 +154,10 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Se comprueba si la categoria tiene vehiculos asociados y si los tiene lanza una excepcion 409 conflict
         if (categoriaRepository.existeVehiculoByUd(id)) {
             log.warn("No se puede borrar la categoría con id: " + id + " porque tiene vehiculos asociados");
-            throw new CategoriaExists("No se puede borrar la categoría con id " + id + " porque tiene vehiculos asociados");
+            // se borra categoria de manera logica
+            categoriaRepository.updateIsDeletedToTrueById(id);
         } else {
-            // Se borra la categoria
+            // Se borra la categoria de manera fisica
             categoriaRepository.deleteById(id);
         }
     }
